@@ -10,13 +10,21 @@ const { fallback, availableLocales } = localeSetting;
 
 export let i18n: ReturnType<typeof createI18n>;
 
+/**
+ * 创建 vue-i18n 多语言选项
+ */
 async function createI18nOptions(): Promise<I18nOptions> {
+  // 在setup()外部 使用store
   const localeStore = useLocaleStoreWithOut();
+  // 语言类型
   const locale = localeStore.getLocale;
+  // import() 函数, 按需 异步 动态加载 多语言配置文件
   const defaultLocal = await import(`./lang/${locale}.ts`);
   const message = defaultLocal.default?.message ?? {};
 
+  // HTML标签 添加属性: 语言类型
   setHtmlPageLang(locale);
+  // 添加到本地语言池
   setLoadLocalePool((loadLocalePool) => {
     loadLocalePool.push(locale);
   });

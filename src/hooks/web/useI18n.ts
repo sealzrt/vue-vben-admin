@@ -24,6 +24,7 @@ function getKey(namespace: string | undefined, key: string) {
 export function useI18n(namespace?: string): {
   t: I18nGlobalTranslation;
 } {
+  // 兜底: 多语言函数
   const normalFn = {
     t: (key: string) => {
       return getKey(namespace, key);
@@ -34,12 +35,20 @@ export function useI18n(namespace?: string): {
     return normalFn;
   }
 
+  // 如果要切换整个应用程序的区域设置，则需要通过使用 createI18n 创建的 i18n 实例的 global 属性进行更改
+  // ref: https://vue-i18n.intlify.dev/guide/essentials/scope
+  // case1: when vue-i18n is being used with legacy: false, note that i18n.global.locale is a ref, so we must set it via .value:
+  //    i18n.global.locale.value = 'en'
+  // case2: otherwise - when using legacy: true, we set it like this:
+  //    i18n.global.locale = 'en'
+
   const { t, ...methods } = i18n.global;
 
   const tFn: I18nGlobalTranslation = (key: string, ...arg: any[]) => {
     if (!key) return '';
     if (!key.includes('.') && !namespace) return key;
 
+    // 调用t函数, 参数为(key,...arg)
     return (t as (arg0: string, ...arg: I18nTranslationRestParameters) => string)(
       getKey(namespace, key),
       ...(arg as I18nTranslationRestParameters),

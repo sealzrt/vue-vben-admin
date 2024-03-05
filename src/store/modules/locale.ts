@@ -49,6 +49,10 @@ export const useLocaleStore = defineStore({
   },
 });
 
+/**
+ * 如果你想在 setup() 外部使用一个 store，记得把 pinia 对象传给 useStore(), 然后就可以使用它了
+ * https://pinia.vuejs.org/zh/ssr/nuxt.html#using-the-store-outside-of-setup
+ */
 // Need to be used outside the setup
 export function useLocaleStoreWithOut() {
   return useLocaleStore(store);
