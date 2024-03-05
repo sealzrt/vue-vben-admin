@@ -23,6 +23,7 @@ interface AppState {
   pageLoading: boolean;
   // project config
   projectConfig: ProjectConfig | null;
+  // 当窗口缩小时，记住一些状态，当窗口恢复时恢复这些状态
   // When the window shrinks, remember some states, and restore these states when the window is restored
   beforeMiniInfo: BeforeMiniState;
 }
@@ -112,6 +113,10 @@ export const useAppStore = defineStore({
   },
 });
 
+/**
+ * 如果你想在 setup() 外部使用一个 store，记得把 pinia 对象传给 useStore(), 然后就可以使用它了
+ * https://pinia.vuejs.org/zh/ssr/nuxt.html#using-the-store-outside-of-setup
+ */
 // Need to be used outside the setup
 export function useAppStoreWithOut() {
   return useAppStore(store);
