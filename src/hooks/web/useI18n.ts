@@ -1,5 +1,8 @@
 import { i18n } from '@/locales/setupI18n';
 
+/**
+ * 该类型表示一个全局的翻译函数，它接受不同的参数类型以支持不同的使用场景
+ */
 type I18nGlobalTranslation = {
   (key: string): string;
   (key: string, locale: string): string;

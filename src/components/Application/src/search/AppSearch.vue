@@ -5,10 +5,14 @@
   import AppSearchModal from './AppSearchModal.vue';
   import { useI18n } from '@/hooks/web/useI18n';
 
+  /**
+   * 搜索框组件
+   */
   export default defineComponent({
     name: 'AppSearch',
     setup() {
       const showModal = ref(false);
+      // 多语言函数
       const { t } = useI18n();
 
       function changeModal(show: boolean) {
