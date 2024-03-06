@@ -10,7 +10,21 @@ import { router } from '@/router';
 import { PermissionModeEnum } from '@/enums/appEnum';
 import { pathToRegexp } from 'path-to-regexp';
 
+/**
+ * Vite 支持使用特殊的 import.meta.glob 函数从文件系统导入多个模块（该方式为异步加载模块形式）
+ * 匹配到的文件默认是懒加载的，通过动态导入实现，并会在构建时分离为独立的 chunk。
+ * 如果你倾向于直接引入（同步加载使用）所有的模块，你可以传入 { eager: true } 作为第二个参数
+ *
+ *      const modules = import.meta.glob('./dir/*.js')
+ *      // vite 生成的代码
+ *      const modules = {
+ *        './dir/foo.js': () => import('./dir/foo.js'),
+ *        './dir/bar.js': () => import('./dir/bar.js'),
+ *      }
+ *
+ */
 const modules = import.meta.glob('./modules/**/*.ts', { eager: true });
+// console.log('modules = import.meta.glob', modules);
 
 const menuModules: MenuModule[] = [];
 
@@ -19,6 +33,7 @@ Object.keys(modules).forEach((key) => {
   const modList = Array.isArray(mod) ? [...mod] : [mod];
   menuModules.push(...modList);
 });
+// console.log('menuModules', menuModules);
 
 // ===========================
 // ==========Helper===========

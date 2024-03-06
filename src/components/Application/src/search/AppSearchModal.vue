@@ -69,7 +69,7 @@
   import { useI18n } from '@/hooks/web/useI18n';
   import { useAppInject } from '@/hooks/web/useAppInject';
 
-  // 定义一个名为props的常量，用于接收父组件传递的属性
+  // 定义一个名为props的常量，用于接收父组件传递的属性 'visible'
   const props = defineProps({
     // 定义visible属性，类型为Boolean
     visible: { type: Boolean },
@@ -88,7 +88,7 @@
   const { t } = useI18n();
   // 引入前缀class
   const { prefixCls } = useDesign('app-search-modal');
-  // 保存数组ref的hooks, refs是动态ref数组, setRefs是设置ref数组的方法
+  // 保存数组ref的hooks, refs是动态Ref数组, setRefs是设置ref数组的方法
   const { refs, setRefs } = useRefs();
   // 读取app上下文数据, 引入getIsMobile方法
   const { getIsMobile } = useAppInject();
