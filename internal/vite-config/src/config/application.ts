@@ -75,7 +75,7 @@ function defineApplicationConfig(defineOptions: DefineOptions = {}) {
       css: {
         preprocessorOptions: {
           less: {
-            modifyVars: generateModifyVars(),
+            modifyVars: generateModifyVars(), // 修改less变量
             javascriptEnabled: true,
           },
         },

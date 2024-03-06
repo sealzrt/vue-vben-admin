@@ -21,13 +21,19 @@ export interface MultipleTabState {
   lastDragEndIndex: number;
 }
 
+// 函数handleGotoPage，用于处理跳转到页面
 function handleGotoPage(router: Router) {
+  // 使用useGo函数，获取go函数
   const go = useGo(router);
+  // 使用go函数，跳转到当前路由的全路径，并且不刷新页面
   go(unref(router.currentRoute).fullPath, true);
 }
 
+// 根据tabItem 获取 路由跳转对象
 const getToTarget = (tabItem: RouteLocationNormalized) => {
+  // 获取tabItem中的params、path、query
   const { params, path, query } = tabItem;
+  // 返回一个对象，包含params、path、query，如果params、query不存在，则默认为空对象
   return {
     params: params || {},
     path,
@@ -35,6 +41,7 @@ const getToTarget = (tabItem: RouteLocationNormalized) => {
   };
 };
 
+// 获取项目设置中的多标签设置的缓存
 const cacheTab = projectSetting.multiTabsSetting.cache;
 
 export const useMultipleTabStore = defineStore({

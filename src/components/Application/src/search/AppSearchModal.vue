@@ -69,18 +69,28 @@
   import { useI18n } from '@/hooks/web/useI18n';
   import { useAppInject } from '@/hooks/web/useAppInject';
 
+  // 定义一个名为props的常量，用于接收父组件传递的属性
   const props = defineProps({
+    // 定义visible属性，类型为Boolean
     visible: { type: Boolean },
   });
 
+  // 定义一个emits函数，用于触发close事件
   const emit = defineEmits(['close']);
 
+  // 创建一个响应式引用变量scrollWrap
   const scrollWrap = ref(null);
+
+  // 创建一个响应式引用，初始值为null
   const inputRef = ref<HTMLElement | null>(null);
 
+  // 引入useI18n函数
   const { t } = useI18n();
+  // 引入前缀class
   const { prefixCls } = useDesign('app-search-modal');
+  // 保存数组ref的hooks, refs是动态ref数组, setRefs是设置ref数组的方法
   const { refs, setRefs } = useRefs();
+  // 读取app上下文数据, 引入getIsMobile方法
   const { getIsMobile } = useAppInject();
 
   const { handleSearch, searchResult, keyword, activeIndex, handleEnter, handleMouseenter } =

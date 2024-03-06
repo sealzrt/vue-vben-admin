@@ -19,6 +19,7 @@
   const { t } = useI18n();
 </script>
 <style lang="less" scoped>
+  // less变量, ref: src/design/var/index.less > @namespace
   @prefix-cls: ~'@{namespace}-app-search-footer';
 
   .@{prefix-cls} {

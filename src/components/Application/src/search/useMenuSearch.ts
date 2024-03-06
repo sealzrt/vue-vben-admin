@@ -28,8 +28,11 @@ function createSearchReg(key: string) {
 }
 
 export function useMenuSearch(refs: Ref<HTMLElement[]>, scrollWrap: Ref, emit: AnyFunction) {
+  // 声明一个类型为SearchResult的数组，用于存储搜索结果
   const searchResult = ref<SearchResult[]>([]);
+  // 声明一个字符串，用于存储搜索关键字
   const keyword = ref('');
+  // 声明一个整型，用于存储当前激活的搜索结果的索引
   const activeIndex = ref(-1);
 
   let menuList: Menu[] = [];

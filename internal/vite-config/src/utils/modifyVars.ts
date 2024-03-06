@@ -17,6 +17,7 @@ function generateAntColors(color: string, theme: 'default' | 'dark' = 'default')
 
 /**
  * less global variable
+ * 修改less变量
  */
 export function generateModifyVars() {
   const palettes = generateAntColors(primaryColor);
