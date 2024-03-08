@@ -15,15 +15,22 @@ interface LangModule {
   dateLocaleName: string;
 }
 
+// 设置国际化语言
 function setI18nLanguage(locale: LocaleType) {
+  // 使用localeStore
   const localeStore = useLocaleStoreWithOut();
 
+  // 判断i18n的模式
   if (i18n.mode === 'legacy') {
+    // 如果是legacy模式，将locale赋值给i18n.global.locale
     i18n.global.locale = locale;
   } else {
+    // 如果不是legacy模式，将locale赋值给i18n.global.locale的value属性
     (i18n.global.locale as any).value = locale;
   }
+  // 设置localeStore的locale信息
   localeStore.setLocaleInfo({ locale });
+  // 设置html页面的语言
   setHtmlPageLang(locale);
 }
 

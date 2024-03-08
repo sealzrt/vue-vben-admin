@@ -21,10 +21,15 @@ import { deepMerge } from '@/utils';
 import { Persistent } from '@/utils/cache/persistent';
 
 // Initial project configuration
+// 初始化项目配置
 export function initAppConfigStore() {
+  // 用于管理本地语言设置的store
   const localeStore = useLocaleStore();
+  // APP全局的store
   const appStore = useAppStore();
+  // 从本地持久化存储中获取ProjectConfig类型的变量projCfg
   let projCfg: ProjectConfig = Persistent.getLocal(PROJ_CFG_KEY) as ProjectConfig;
+  // 将projectSetting和projCfg进行深拷贝合并
   projCfg = deepMerge(projectSetting, projCfg || {});
   const darkMode = appStore.getDarkMode;
   const {

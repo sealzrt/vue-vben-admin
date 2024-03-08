@@ -11,10 +11,14 @@ import { getCommonStoragePrefix } from '@/utils/env';
 import { Encryption, EncryptionFactory } from '@/utils/cipher';
 import { cacheCipher, SHOULD_ENABLE_STORAGE_ENCRYPTION } from '@/settings/encryptionSetting';
 
+// 导出常量PERSIST_KEY_PREFIX，获取公共存储前缀
 export const PERSIST_KEY_PREFIX = getCommonStoragePrefix();
 
+// 创建加密对象persistEncryption
 const persistEncryption: Encryption = EncryptionFactory.createAesEncryption({
+  // 加密key
   key: cacheCipher.key,
+  // 加密iv
   iv: cacheCipher.iv,
 });
 

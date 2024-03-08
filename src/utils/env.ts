@@ -24,16 +24,24 @@ const getVariableName = (title: string) => {
   return `__PRODUCTION__${strToHex(title) || '__APP'}__CONF__`.toUpperCase().replace(/\s/g, '');
 };
 
+// 获取应用的环境变量配置
 export function getAppEnvConfig() {
+  // Vite 在一个特殊的 import.meta.env 对象上暴露环境变量
   const ENV_NAME = getVariableName(import.meta.env.VITE_GLOB_APP_TITLE);
+  // If the development environment is DEV, get the global configuration
   const ENV = import.meta.env.DEV
     ? // Get the global configuration (the configuration will be extracted independently when packaging)
       (import.meta.env as unknown as GlobEnvConfig)
     : (window[ENV_NAME] as unknown as GlobEnvConfig);
   const { VITE_GLOB_APP_TITLE, VITE_GLOB_API_URL_PREFIX, VITE_GLOB_UPLOAD_URL } = ENV;
+  // 获取环境变量VITE_GLOB_API_URL
   let { VITE_GLOB_API_URL } = ENV;
+  // 如果本地存储中存在API_ADDRESS变量
   if (localStorage.getItem(API_ADDRESS)) {
+    // 从本地存储中获取API_ADDRESS变量，并将其解析为JSON格式
     const address = JSON.parse(localStorage.getItem(API_ADDRESS) || '{}');
+    // 如果address变量中存在key属性, 优先使用
+    // 否则使用VITE_GLOB_API_URL
     if (address?.key) VITE_GLOB_API_URL = address?.val;
   }
   return {

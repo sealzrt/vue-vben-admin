@@ -15,6 +15,9 @@ interface LocaleState {
   localInfo: LocaleSetting;
 }
 
+/**
+ * 用于管理本地语言设置的store
+ */
 export const useLocaleStore = defineStore({
   id: 'app-locale',
   state: (): LocaleState => ({

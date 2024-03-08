@@ -28,20 +28,26 @@ export function setupRouterGuard(router: Router) {
 
 /**
  * Hooks for handling page state
+ * 为路由添加页面加载保护
+ * @param router 路由
  */
 function createPageGuard(router: Router) {
+  // 创建一个Map，用于存储页面是否已经加载
   const loadedPageMap = new Map<string, boolean>();
 
+  // 路由跳转前
   router.beforeEach(async (to) => {
-    // The page has already been loaded, it will be faster to open it again, you don’t need to do loading and other processing
+    // 页面已经加载，再次打开时不需要重新加载，不需要加载和其它处理
     to.meta.loaded = !!loadedPageMap.get(to.path);
-    // Notify routing changes
+    // 通知路由变化
     setRouteChange(to);
 
     return true;
   });
 
+  // 路由跳转后
   router.afterEach((to) => {
+    // 页面加载后，将页面加载状态存入Map
     loadedPageMap.set(to.path, true);
   });
 }
