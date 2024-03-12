@@ -1,6 +1,9 @@
 import type { ComponentPublicInstance, Ref } from 'vue';
 import { onBeforeUpdate, shallowRef } from 'vue';
 
+/**
+ * 在一次 渲染/更新 的过程中 && for循环里 设置DOM节点的ref引用
+ */
 function useRefs<T = HTMLElement>(): {
   refs: Ref<T[]>;
   setRefs: (index: number) => (el: Element | ComponentPublicInstance | null) => void;
@@ -8,7 +11,7 @@ function useRefs<T = HTMLElement>(): {
   // 定义一个 浅层的响应式 变量refs，类型为Ref<T[]>，初始值为空数组
   const refs = shallowRef([]) as Ref<T[]>;
 
-  // 这个钩子可以用来在 Vue 更新 DOM 之前访问 DOM 状态
+  // onBeforeUpdate(callback): 注册一个钩子，在组件即将因为响应式状态变更而更新其 DOM 树之前调用
   // 每一次DOM更新之前 清空 refs 数组
   onBeforeUpdate(() => {
     refs.value = [];
