@@ -1,3 +1,4 @@
+import { TimeoutHandle } from '@vben/types';
 import { onMounted, onUnmounted, ref, unref } from 'vue';
 
 type DebouncedFunction<T extends (...args: any[]) => any> = (...args: Parameters<T>) => void;
@@ -13,7 +14,8 @@ function useDebounceFn<T extends (...args: any[]) => any>(
   delay = 200,
 ): DebouncedFunction<T> {
   // 声明定时器变量
-  let timeout: ReturnType<typeof setTimeout>;
+  // let timeout: ReturnType<typeof setTimeout>;
+  let timeout: TimeoutHandle;
 
   // 创建一个ref变量，用于判断是否可以执行fn
   const isReady = ref(true);

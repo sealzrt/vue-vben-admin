@@ -33,7 +33,7 @@ const position = (el: HTMLElement) => {
 };
 
 /**
- * 使用UseScrollToOptions选项定义一个函数useScrollTo
+ * 滚动 hooks
  * @param {HTMLElement} el      - 需要滚动到的元素
  * @param {number} to    - 要滚动到的位置
  * @param {number} duration=500    - 动画的持续时间

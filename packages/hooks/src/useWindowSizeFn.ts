@@ -36,12 +36,12 @@ function useWindowSizeFn(fn: AnyFunction, options: UseWindowSizeOptions = {}) {
     window.removeEventListener('resize', handler);
   };
 
-  // 在组件挂载时执行 start 函数
+  // tryOnMounted: 安全执行onMounted。如果它在组件生命周期内，则调用 onMounted()，如果不在，则调用该函数
   tryOnMounted(() => {
     start();
   });
 
-  // 在组件卸载时执行 stop 函数
+  // 安全执行 onUnmounted。如果在组件生命周期内，则调用 onUnmounted()，如果不在，则什么都不做
   tryOnUnmounted(() => {
     stop();
   });
