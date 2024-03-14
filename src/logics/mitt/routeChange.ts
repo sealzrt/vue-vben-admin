@@ -14,7 +14,7 @@ const emitter = mitt<{
 
 let lastChangeTab: RouteLocationNormalized;
 
-// 导出一个函数，用于设置路由改变
+// 触发emit事件, 并设置当前的路由
 export function setRouteChange(lastChangeRoute: RouteLocationNormalized) {
   // 获取原始路由
   const r = getRawRoute(lastChangeRoute);

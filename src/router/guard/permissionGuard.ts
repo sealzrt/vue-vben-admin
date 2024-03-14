@@ -15,16 +15,30 @@ const ROOT_PATH = RootRoute.path;
 
 const whitePathList: PageEnum[] = [LOGIN_PATH];
 
+/**
+ * 权限路由守卫
+ * @param router
+ */
 export function createPermissionGuard(router: Router) {
   const userStore = useUserStoreWithOut();
   const permissionStore = usePermissionStoreWithOut();
+
+  /**
+   * 全局前置守卫: 路由跳转前
+   * 确保 next 在所有分支 都被调用一次
+   */
   router.beforeEach(async (to, from, next) => {
+    /*** 处理默认首页 & 个人首页 不一致的问题 ***/
     if (
       from.path === ROOT_PATH &&
       to.path === PageEnum.BASE_HOME &&
       userStore.getUserInfo.homePath &&
       userStore.getUserInfo.homePath !== PageEnum.BASE_HOME
     ) {
+      /**
+       * next(): 不会触发 beforeEach
+       * next('/xxx') 或者 next({ path: '/xxx' }) 跳到不同的地址都会再次执行 router.beforeEach 钩子函数
+       */
       next(userStore.getUserInfo.homePath);
       return;
     }
@@ -32,22 +46,29 @@ export function createPermissionGuard(router: Router) {
     const token = userStore.getToken;
 
     // Whitelist can be directly entered
+    // 判断路径是否在白名单中
     if (whitePathList.includes(to.path as PageEnum)) {
+      // 如果路径是登录路径，并且有token
       if (to.path === LOGIN_PATH && token) {
+        // 获取用户存储的会话超时时间
         const isSessionTimeout = userStore.getSessionTimeout;
         try {
+          // 执行登录后的操作
           await userStore.afterLoginAction();
+          // 如果会话超时时间不为空，则跳转到指定路径
           if (!isSessionTimeout) {
             next(decodeURIComponent((to.query?.redirect as string) || '/'));
             return;
           }
         } catch {
-          //
+          // 捕获异常
         }
       }
+      // 跳过中间件
       next();
       return;
     }
+
     // token or user does not exist
     if (!token) {
       // You can access without permission. You need to set the routing meta.ignoreAuth to true

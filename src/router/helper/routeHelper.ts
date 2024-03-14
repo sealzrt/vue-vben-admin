@@ -40,27 +40,46 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
   });
 }
 
+/**
+ * 动态加载组件
+ * @param dynamicViewsModules
+ * @param component
+ */
+// 函数dynamicImport用于动态导入组件
+// dynamicViewsModules：动态视图模块，是一个对象，key为路径，value为函数，函数返回一个Promise，resolve一个Recordable对象
+// component：组件名
 function dynamicImport(
   dynamicViewsModules: Record<string, () => Promise<Recordable>>,
   component: string,
 ) {
+  // 获取dynamicViewsModules的所有key
   const keys = Object.keys(dynamicViewsModules);
+  // 过滤出符合条件的key
   const matchKeys = keys.filter((key) => {
+    // 获取key中"../../views"之后的部分
     const k = key.replace('../../views', '');
+    // 判断component是否以"/"开头
     const startFlag = component.startsWith('/');
+    // 判断component是否以".vue"或".tsx"结尾
     const endFlag = component.endsWith('.vue') || component.endsWith('.tsx');
+    // 如果以"/"开头，从0开始截取，否则从1开始截取
     const startIndex = startFlag ? 0 : 1;
+    // 如果以".vue"或".tsx"结尾，取k的长度，否则取k中最后一个"."的位置
     const lastIndex = endFlag ? k.length : k.lastIndexOf('.');
+    // 判断k中从startIndex开始，到lastIndex结束的部分是否等于component
     return k.substring(startIndex, lastIndex) === component;
   });
+  // 如果matchKeys的长度为1，返回dynamicViewsModules中对应的value
   if (matchKeys?.length === 1) {
     const matchKey = matchKeys[0];
     return dynamicViewsModules[matchKey];
+    // 如果matchKeys的长度大于1，报警告
   } else if (matchKeys?.length > 1) {
     warn(
       'Please do not create `.vue` and `.TSX` files with the same file name in the same hierarchical directory under the views folder. This will cause dynamic introduction failure',
     );
     return;
+    // 如果matchKeys的长度为0，报警告，并返回EXCEPTION_COMPONENT
   } else {
     warn('在src/views/下找不到`' + component + '.vue` 或 `' + component + '.tsx`, 请自行创建!');
     return EXCEPTION_COMPONENT;
@@ -68,33 +87,49 @@ function dynamicImport(
 }
 
 // Turn background objects into routing objects
-// 将背景对象变成路由对象
+// 将对象变成路由对象
+// 将对象转换为路由
 export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
+  // 遍历路由列表
   routeList.forEach((route) => {
+    // 将路由的组件转换为字符串
     const component = route.component as string;
+    // 如果组件存在
     if (component) {
+      // 如果组件是大写字母，则将其转换为LayoutMap中的值
       if (component.toUpperCase() === 'LAYOUT') {
         route.component = LayoutMap.get(component.toUpperCase());
       } else {
+        // 将路由的子路由设置为当前路由的克隆
         route.children = [cloneDeep(route)];
+        // 将路由的组件设置为Layout
         route.component = LAYOUT;
 
         //某些情况下如果name如果没有值， 多个一级路由菜单会导致页面404
         if (!route.name) {
           warn('找不到菜单对应的name, 请检查数据!' + JSON.stringify(route));
         }
+        // 将路由的name设置为父路由的name
         route.name = `${route.name}Parent`;
+        // 将路由的path设置为空
         route.path = '';
+        // 获取路由的meta属性
         const meta = route.meta || {};
+        // 将meta属性的single设置为true
         meta.single = true;
+        // 将meta属性的affix设置为false
         meta.affix = false;
+        // 将路由的meta属性设置为meta
         route.meta = meta;
       }
     } else {
+      // 如果组件不存在，则警告
       warn('请正确配置路由：' + route?.name + '的component属性');
     }
+    // 如果路由有子路由，则异步导入子路由
     route.children && asyncImportRoute(route.children);
   });
+  // 将路由列表转换为T类型
   return routeList as unknown as T[];
 }
 

@@ -51,6 +51,10 @@ function initPersistentMemory() {
 }
 
 export class Persistent {
+  /**
+   * 静态方法
+   * @param key
+   */
   static getLocal<T>(key: LocalKeys) {
     return localMemory.get(key)?.value as Nullable<T>;
   }

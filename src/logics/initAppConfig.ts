@@ -45,6 +45,8 @@ export function initAppConfigStore() {
   } catch (error) {
     console.log(error);
   }
+
+  // 设置项目配置
   appStore.setProjectConfig(projCfg);
 
   // init dark mode

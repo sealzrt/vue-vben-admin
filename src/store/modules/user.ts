@@ -34,7 +34,7 @@ export const useUserStore = defineStore({
     token: undefined,
     // roleList
     roleList: [],
-    // Whether the login expired
+    // Whether the login expired, 登录是否过期
     sessionTimeout: false,
     // Last fetch time
     lastUpdateTime: 0,
@@ -100,20 +100,32 @@ export const useUserStore = defineStore({
         return Promise.reject(error);
       }
     },
+    /**
+     * 登录后的逻辑
+     * @param goHome
+     */
     async afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
+      // 如果没有token，返回null
       if (!this.getToken) return null;
       // get user info
+      // 获取用户信息 (包括: 角色信息)
       const userInfo = await this.getUserInfoAction();
 
+      // 获取登录是否过期
       const sessionTimeout = this.sessionTimeout;
+      // TODO ??? 没看懂
       if (sessionTimeout) {
         this.setSessionTimeout(false);
       } else {
+        // 使用usePermissionStore()获取permissionStore
         const permissionStore = usePermissionStore();
 
         // 动态路由加载（首次）
+        // 是否已动态加载了路由
         if (!permissionStore.isDynamicAddedRoute) {
+          // 如果没有加载过，获取动态路由
           const routes = await permissionStore.buildRoutesAction();
+          // 将动态路由添加到router中
           [...routes, PAGE_NOT_FOUND_ROUTE].forEach((route) => {
             router.addRoute(route as unknown as RouteRecordRaw);
           });
@@ -121,22 +133,32 @@ export const useUserStore = defineStore({
           permissionStore.setDynamicAddedRoute(true);
         }
 
+        // 如果有goHome参数，跳转到homePath
         goHome && (await router.replace(userInfo?.homePath || PageEnum.BASE_HOME));
       }
+      // 返回用户信息
       return userInfo;
     },
+    // async 声明一个异步函数，返回一个Promise<UserInfo | null>类型的值
     async getUserInfoAction(): Promise<UserInfo | null> {
+      // 如果没有getToken属性，则返回null
       if (!this.getToken) return null;
+      // 调用getUserInfo函数，获取用户信息
       const userInfo = await getUserInfo();
+      // 获取用户信息中的roles属性，如果没有则默认为空数组
       const { roles = [] } = userInfo;
+      // 如果roles是数组，则将roles转换为RoleEnum类型的数组，并调用setRoleList函数设置角色列表
       if (isArray(roles)) {
         const roleList = roles.map((item) => item.value) as RoleEnum[];
         this.setRoleList(roleList);
       } else {
+        // 如果roles不是数组，则将roles设置为空数组，并调用setRoleList函数设置角色列表
         userInfo.roles = [];
         this.setRoleList([]);
       }
+      // 调用setUserInfo函数设置用户信息
       this.setUserInfo(userInfo);
+      // 返回用户信息
       return userInfo;
     },
     /**
@@ -186,6 +208,9 @@ export const useUserStore = defineStore({
   },
 });
 
+/**
+ * 如果你想在 setup() 外部使用一个 store，记得把 pinia 对象传给 useStore(), 然后就可以使用它了
+ */
 // Need to be used outside the setup
 export function useUserStoreWithOut() {
   return useUserStore(store);

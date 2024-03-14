@@ -29,7 +29,7 @@ interface PermissionState {
   // 权限代码列表
   permCodeList: string[] | number[];
   // Whether the route has been dynamically added
-  // 路由是否动态添加
+  // 是否已动态加载了路由
   isDynamicAddedRoute: boolean;
   // To trigger a menu update
   // 触发菜单更新
@@ -110,12 +110,18 @@ export const usePermissionStore = defineStore({
 
     // 构建路由
     async buildRoutesAction(): Promise<AppRouteRecordRaw[]> {
+      // 获取i18n实例
       const { t } = useI18n();
+      // 获取用户仓库实例
       const userStore = useUserStore();
+      // 获取应用仓库实例
       const appStore = useAppStoreWithOut();
 
+      // 定义路由数组
       let routes: AppRouteRecordRaw[] = [];
+      // 获取角色列表
       const roleList = toRaw(userStore.getRoleList) || [];
+      // 获取项目配置
       const { permissionMode = projectSetting.permissionMode } = appStore.getProjectConfig;
 
       // 路由过滤器 在 函数filter 作为回调传入遍历使用
@@ -128,6 +134,7 @@ export const usePermissionStore = defineStore({
         return roleList.some((role) => roles.includes(role));
       };
 
+      // 路由过滤器 在 函数filter 作为回调传入遍历使用
       const routeRemoveIgnoreFilter = (route: AppRouteRecordRaw) => {
         const { meta } = route;
         // ignoreRoute 为true 则路由仅用于菜单生成，不会在实际的路由表中出现
@@ -139,34 +146,50 @@ export const usePermissionStore = defineStore({
       /**
        * @description 根据设置的首页path，修正routes中的affix标记（固定首页）
        * */
+      // 给首页路由添加affix固钉
       const patchHomeAffix = (routes: AppRouteRecordRaw[]) => {
+        // 如果路由为空，则返回
         if (!routes || routes.length === 0) return;
+        // 获取用户信息中的homePath，如果没有则默认为PageEnum.BASE_HOME
         let homePath: string = userStore.getUserInfo.homePath || PageEnum.BASE_HOME;
 
+        // 遍历路由，给符合条件的路由添加affix属性
         function patcher(routes: AppRouteRecordRaw[], parentPath = '') {
+          // 如果父路径存在，则拼接
           if (parentPath) parentPath = parentPath + '/';
+          // 遍历路由
           routes.forEach((route: AppRouteRecordRaw) => {
             const { path, children, redirect } = route;
+            // 获取当前路径
             const currentPath = path.startsWith('/') ? path : parentPath + path;
+            // 如果当前路径等于homePath
             if (currentPath === homePath) {
+              // 如果存在重定向，则更新homePath
               if (redirect) {
                 homePath = route.redirect! as string;
               } else {
+                // 否则给路由添加affix属性
                 route.meta = Object.assign({}, route.meta, { affix: true });
+                // 处理哦玩首页的路径, 则抛出错误，已处理完毕
                 throw new Error('end');
               }
             }
+            // 如果存在子路由，则递归调用patcher
             children && children.length > 0 && patcher(children, currentPath);
           });
         }
 
         try {
+          // 调用patcher
           patcher(routes);
         } catch (e) {
           // 已处理完毕跳出循环
         }
+        // 返回
         return;
       };
+
+      // debugger;
 
       switch (permissionMode) {
         // 角色权限
@@ -210,6 +233,7 @@ export const usePermissionStore = defineStore({
         case PermissionModeEnum.BACK:
           const { createMessage } = useMessage();
 
+          // 显示loading
           createMessage.loading({
             content: t('sys.app.menuLoading'),
             duration: 1,
