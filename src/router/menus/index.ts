@@ -22,6 +22,15 @@ import { pathToRegexp } from 'path-to-regexp';
  *        './dir/bar.js': () => import('./dir/bar.js'),
  *      }
  *
+ *      const modules = import.meta.glob('./dir/*.js', { eager: true })
+ *       // vite 生成的代码
+ *       import * as __glob__0_0 from './dir/foo.js'
+ *       import * as __glob__0_1 from './dir/bar.js'
+ *       const modules = {
+ *         './dir/foo.js': __glob__0_0,
+ *         './dir/bar.js': __glob__0_1
+ *       }
+ *
  */
 const modules = import.meta.glob('./modules/**/*.ts', { eager: true });
 // console.log('modules = import.meta.glob', modules);

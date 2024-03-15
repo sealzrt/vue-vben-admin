@@ -21,6 +21,9 @@ interface UserState {
   userInfo: Nullable<UserInfo>;
   token?: string;
   roleList: RoleEnum[];
+  /**
+   * 用户登录状态是否失效. 默认值是false,  401状态码时 设置为true;
+   */
   sessionTimeout?: boolean;
   lastUpdateTime: number;
 }
@@ -49,6 +52,10 @@ export const useUserStore = defineStore({
     getRoleList(state): RoleEnum[] {
       return state.roleList.length > 0 ? state.roleList : getAuthCache<RoleEnum[]>(ROLES_KEY);
     },
+    /**
+     * 获取用户登录状态是否失效. 默认值是false,  401状态码时 设置为true;
+     * @param state
+     */
     getSessionTimeout(state): boolean {
       return !!state.sessionTimeout;
     },
@@ -70,6 +77,10 @@ export const useUserStore = defineStore({
       this.lastUpdateTime = new Date().getTime();
       setAuthCache(USER_INFO_KEY, info);
     },
+    /**
+     * 用户登录状态是否失效. 默认值是false,  401状态码时 设置为true;
+     * @param flag
+     */
     setSessionTimeout(flag: boolean) {
       this.sessionTimeout = flag;
     },
@@ -113,7 +124,7 @@ export const useUserStore = defineStore({
 
       // 获取登录是否过期
       const sessionTimeout = this.sessionTimeout;
-      // TODO ??? 没看懂
+      // 用户登录状态是否失效. 正常是false,  401状态码时 设置为true;
       if (sessionTimeout) {
         this.setSessionTimeout(false);
       } else {

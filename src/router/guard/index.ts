@@ -22,6 +22,7 @@ export function setupRouterGuard(router: Router) {
   createMessageGuard(router);
   createProgressGuard(router);
   // 权限
+  // debugger
   createPermissionGuard(router);
   // 菜单
   createParamMenuGuard(router); // must after createPermissionGuard (menu has been built.)

@@ -37,7 +37,7 @@ export function createPermissionGuard(router: Router) {
     ) {
       /**
        * next(): 不会触发 beforeEach
-       * next('/xxx') 或者 next({ path: '/xxx' }) 跳到不同的地址都会再次执行 router.beforeEach 钩子函数
+       * next('/xxx') 或者 next({ path: '/xxx' }): 跳到不同的地址都会再次执行 router.beforeEach 钩子函数
        */
       next(userStore.getUserInfo.homePath);
       return;
@@ -46,11 +46,11 @@ export function createPermissionGuard(router: Router) {
     const token = userStore.getToken;
 
     // Whitelist can be directly entered
-    // 判断路径是否在白名单中
+    // 判断路径是否在白名单中, 如登录页
     if (whitePathList.includes(to.path as PageEnum)) {
       // 如果路径是登录路径，并且有token
       if (to.path === LOGIN_PATH && token) {
-        // 获取用户存储的会话超时时间
+        // 获取用户登录状态是否失效. 默认值是false,  401状态码时 设置为true;
         const isSessionTimeout = userStore.getSessionTimeout;
         try {
           // 执行登录后的操作
