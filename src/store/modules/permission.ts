@@ -108,7 +108,9 @@ export const usePermissionStore = defineStore({
       this.setPermCodeList(codeList);
     },
 
-    // 构建路由
+    /**
+     * 构建路由
+     */
     async buildRoutesAction(): Promise<AppRouteRecordRaw[]> {
       // 获取i18n实例
       const { t } = useI18n();
@@ -245,18 +247,20 @@ export const usePermissionStore = defineStore({
           // 这个功能可能只需要执行一次，实际项目可以自己放在合适的时间
           let routeList: AppRouteRecordRaw[] = [];
           try {
+            // 获取并保存 权限码
             await this.changePermissionCode();
+            // 获取菜单
             routeList = (await getMenuList()) as AppRouteRecordRaw[];
           } catch (error) {
             console.error(error);
           }
 
           // Dynamically introduce components
-          // 动态引入组件
+          // 根据菜单数据 转换成前端路由
           routeList = transformObjToRoute(routeList);
 
           //  Background routing to menu structure
-          //  后台路由到菜单结构
+          //  转换后台路由 为菜单
           const backMenuList = transformRouteToMenu(routeList);
           this.setBackMenuList(backMenuList);
 

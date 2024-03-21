@@ -123,20 +123,21 @@ export const useUserStore = defineStore({
       const userInfo = await this.getUserInfoAction();
 
       // 获取登录是否过期
-      const sessionTimeout = this.sessionTimeout;
       // 用户登录状态是否失效. 正常是false,  401状态码时 设置为true;
+      const sessionTimeout = this.sessionTimeout;
       if (sessionTimeout) {
+        // 设置为 未过期
         this.setSessionTimeout(false);
       } else {
-        // 使用usePermissionStore()获取permissionStore
+        // 使用usePermissionStore() 获取permissionStore
         const permissionStore = usePermissionStore();
 
         // 动态路由加载（首次）
-        // 是否已动态加载了路由
+        // 是否已加载了动态路由
         if (!permissionStore.isDynamicAddedRoute) {
           // 如果没有加载过，获取动态路由
           const routes = await permissionStore.buildRoutesAction();
-          // 将动态路由添加到router中
+          // 调用 router.addRoute 动态添加路由
           [...routes, PAGE_NOT_FOUND_ROUTE].forEach((route) => {
             router.addRoute(route as unknown as RouteRecordRaw);
           });

@@ -134,14 +134,21 @@ export type WithInstall<T> = T & {
 
 export type CustomComponent = Component & { displayName?: string };
 
+// 导出一个带有install属性的函数，该函数接收一个自定义组件T和一个可选的别名参数
 export const withInstall = <T extends CustomComponent>(component: T, alias?: string) => {
+  // 将install属性添加到组件上
   (component as Record<string, unknown>).install = (app: App) => {
+    // 获取组件的名称或者显示名称
     const compName = component.name || component.displayName;
+    // 如果没有名称则直接返回
     if (!compName) return;
+    // 将组件注册到app上
     app.component(compName, component);
+    // 如果存在别名，则将组件添加到全局属性上
     if (alias) {
       app.config.globalProperties[alias] = component;
     }
   };
+  // 返回一个带有install属性的组件
   return component as WithInstall<T>;
 };

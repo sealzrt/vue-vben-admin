@@ -47,20 +47,27 @@ export function transformRouteToMenu(routeModList: AppRouteModule[], routerMappi
   const cloneRouteModList = cloneDeep(routeModList);
   const routeList: AppRouteRecordRaw[] = [];
 
-  // 对路由项进行修改
+  // 对路由项进行处理
   cloneRouteModList.forEach((item) => {
+    // 如果routerMapping存在，且item.meta.hideChildrenInMenu为true，且item.redirect为字符串
     if (routerMapping && item.meta.hideChildrenInMenu && typeof item.redirect === 'string') {
+      // 将item.redirect赋值给item.path
       item.path = item.redirect;
     }
 
+    // 如果item.meta?.single为true
     if (item.meta?.single) {
+      // 获取item?.children?.[0]
       const realItem = item?.children?.[0];
+      // 如果realItem存在，将其添加到routeList中
       realItem && routeList.push(realItem);
     } else {
+      // 否则，将item添加到routeList中
       routeList.push(item);
     }
   });
-  // 提取树指定结构
+
+  // 对路由对象 进行树形处理
   const list = treeMap(routeList, {
     conversion: (node: AppRouteRecordRaw) => {
       const { meta: { title, hideMenu = false } = {} } = node;
@@ -85,22 +92,30 @@ export function transformRouteToMenu(routeModList: AppRouteModule[], routerMappi
  */
 const menuParamRegex = /(?::)([\s\S]+?)((?=\/)|$)/g;
 
+// 导出一个函数，用于配置动态参数菜单
 export function configureDynamicParamsMenu(menu: Menu, params: RouteParams) {
+  // 获取菜单的路径和参数路径
   const { path, paramPath } = toRaw(menu);
+  // 如果参数路径不存在，则将路径设置为菜单路径
   let realPath = paramPath ? paramPath : path;
+  // 匹配路径中的参数
   const matchArr = realPath.match(menuParamRegex);
 
+  // 遍历匹配到的参数
   matchArr?.forEach((it) => {
+    // 获取真实的参数
     const realIt = it.substr(1);
+    // 如果参数存在，则将路径中的参数替换为参数值
     if (params[realIt]) {
       realPath = realPath.replace(`:${realIt}`, params[realIt] as string);
     }
   });
-  // save original param path.
+  // 保存原始参数路径
   if (!paramPath && matchArr && matchArr.length > 0) {
     menu.paramPath = path;
   }
+  // 将路径设置为真实的路径
   menu.path = realPath;
-  // children
+  // 遍历子菜单
   menu.children?.forEach((item) => configureDynamicParamsMenu(item, params));
 }

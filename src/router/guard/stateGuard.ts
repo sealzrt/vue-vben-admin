@@ -9,6 +9,7 @@ import { removeTabChangeListener } from '@/logics/mitt/routeChange';
 export function createStateGuard(router: Router) {
   router.afterEach((to) => {
     // Just enter the login page and clear the authentication information
+    // 跳转登录页时, 清空所有store数据
     if (to.path === PageEnum.BASE_LOGIN) {
       const tabStore = useMultipleTabStore();
       const userStore = useUserStore();

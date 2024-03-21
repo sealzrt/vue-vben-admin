@@ -14,6 +14,9 @@ const LayoutMap = new Map<string, () => Promise<typeof import('*.vue')>>();
 LayoutMap.set('LAYOUT', LAYOUT);
 LayoutMap.set('IFRAME', IFRAME);
 
+/**
+ * 懒加载的所有模块
+ */
 let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
 
 /**
@@ -45,24 +48,35 @@ let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
  * @param routes
  */
 function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
+  // 懒加载的所有模块
   dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../views/**/*.{vue,tsx}');
   if (!routes) return;
   routes.forEach((item) => {
+    // 如果item中没有component属性，但是有meta属性并且frameSrc属性不为空，则将component属性设置为IFRAME
     if (!item.component && item.meta?.frameSrc) {
       item.component = 'IFRAME';
     }
+    // 获取item中的component和name属性
     const { component, name } = item;
+    // 获取item中的children属性
     const { children } = item;
+    // 如果item中有component属性
     if (component) {
+      // 根据component属性，从LayoutMap中获取对应的布局组件
       const layoutFound = LayoutMap.get(component.toUpperCase());
+      // 如果获取到了布局组件，则将item中的component属性设置为获取到的布局组件
       if (layoutFound) {
         item.component = layoutFound;
       } else {
+        // 根据组件名称 进行匹配
+        // 如果获取不到布局组件，则根据组件名称动态导入组件
         item.component = dynamicImport(dynamicViewsModules, component as string);
       }
     } else if (name) {
+      // 如果item中 没有component属性, 但是有name属性，则获取父布局组件
       item.component = getParentLayout();
     }
+    // 如果item中有children属性，则递归调用asyncImportRoute函数
     children && asyncImportRoute(children);
   });
 }
@@ -114,16 +128,15 @@ function dynamicImport(
 }
 
 // Turn background objects into routing objects
-// 将对象变成路由对象
-// 将对象转换为路由
+// 将菜单对象 转换为 路由对象
 export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
   // 遍历路由列表
   routeList.forEach((route) => {
     // 将路由的组件转换为字符串
     const component = route.component as string;
-    // 如果组件存在
+    // 一级路由一般都是 LAYOUT 组件
     if (component) {
-      // 如果组件是大写字母，则将其转换为LayoutMap中的值
+      // 如果组件是 LAYOUT, 则转换为 LAYOUT
       if (component.toUpperCase() === 'LAYOUT') {
         route.component = LayoutMap.get(component.toUpperCase());
       } else {

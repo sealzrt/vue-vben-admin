@@ -36,7 +36,7 @@ export function createPermissionGuard(router: Router) {
       userStore.getUserInfo.homePath !== PageEnum.BASE_HOME
     ) {
       /**
-       * next(): 不会触发 beforeEach
+       * next(): 进行管道中的下一个钩子
        * next('/xxx') 或者 next({ path: '/xxx' }): 跳到不同的地址都会再次执行 router.beforeEach 钩子函数
        */
       next(userStore.getUserInfo.homePath);
@@ -48,15 +48,20 @@ export function createPermissionGuard(router: Router) {
     // Whitelist can be directly entered
     // 判断路径是否在白名单中, 如登录页
     if (whitePathList.includes(to.path as PageEnum)) {
-      // 如果路径是登录路径，并且有token
+      // 登录页 && 有token
       if (to.path === LOGIN_PATH && token) {
         // 获取用户登录状态是否失效. 默认值是false,  401状态码时 设置为true;
         const isSessionTimeout = userStore.getSessionTimeout;
         try {
-          // 执行登录后的操作
+          // 登录页 && 有token, 直接执行登录后的操作
           await userStore.afterLoginAction();
-          // 如果会话超时时间不为空，则跳转到指定路径
+          // 用户登录状态是否失效. 正常是false,  401状态码时 设置为true;
+          // 根据 QueryString redirect参数 跳转页面, 兜底: 首页
           if (!isSessionTimeout) {
+            /**
+             * next(): 进行管道中的下一个钩子
+             * next('/xxx') 或者 next({ path: '/xxx' }): 跳到不同的地址都会再次执行 router.beforeEach 钩子函数
+             */
             next(decodeURIComponent((to.query?.redirect as string) || '/'));
             return;
           }
@@ -64,14 +69,15 @@ export function createPermissionGuard(router: Router) {
           // 捕获异常
         }
       }
-      // 跳过中间件
+      // 跳过当前中间件, 进行管道中的下一个钩子
       next();
       return;
     }
 
-    // token or user does not exist
+    // 没有token
     if (!token) {
       // You can access without permission. You need to set the routing meta.ignoreAuth to true
+      // 如果没有token, 并且目标页面 不需要认证, 则继续进行管道中的下一个钩子
       if (to.meta.ignoreAuth) {
         next();
         return;
@@ -88,11 +94,13 @@ export function createPermissionGuard(router: Router) {
           redirect: to.path,
         };
       }
+      // 如果没有token,并且目标页面 需要认证, 则跳转到登录页, 同时url参数里携带目标url
       next(redirectData);
       return;
     }
 
     // get userinfo while last fetch time is empty
+    // 用户信息为空, 则获取用户信息
     if (userStore.getLastUpdateTime === 0) {
       try {
         await userStore.getUserInfoAction();
@@ -102,10 +110,11 @@ export function createPermissionGuard(router: Router) {
       }
     }
 
-    // 动态路由加载（首次）
+    // 动态路由加载（首次）,  如果动态路由未加载
     if (!permissionStore.getIsDynamicAddedRoute) {
       const routes = await permissionStore.buildRoutesAction();
       [...routes, PAGE_NOT_FOUND_ROUTE].forEach((route) => {
+        // 调用 router.addRoute 添加动态路由
         router.addRoute(route as unknown as RouteRecordRaw);
       });
       // 记录动态路由加载完成
