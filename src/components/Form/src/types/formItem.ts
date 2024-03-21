@@ -77,7 +77,9 @@ export interface FormItem {
   rules?: object | object[];
   /**
    * Whether to automatically associate form fields. In most cases, you can setting automatic association.
+   * 是否自动关联表单字段。 大多数情况下，您可以设置自动关联
    * If the conditions for automatic association are not met, you can manually associate them. See the notes below.
+   * 如果不满足自动关联的条件，可以手动关联。 请参阅下面的注释
    */
   autoLink?: boolean;
   /**

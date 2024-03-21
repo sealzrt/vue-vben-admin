@@ -17,6 +17,9 @@ interface UseAdvancedContext {
   defaultValueRef: Ref<Recordable>;
 }
 
+/**
+ * 主要用于处理表单的布局和显示，根据屏幕尺寸和表单项的宽度自动切换到高级模式或简单模式
+ */
 export default function ({
   advanceState,
   emit,
@@ -25,20 +28,26 @@ export default function ({
   formModel,
   defaultValueRef,
 }: UseAdvancedContext) {
+  // 获取当前vue组件实例
   const vm = getCurrentInstance();
 
+  // 获取屏幕尺寸相关的 Ref：realWidthRef、screenEnum 和 screenRef。
   const { realWidthRef, screenEnum, screenRef } = useBreakpoint();
 
+  // 计算空格子数量
   const getEmptySpan = computed((): number => {
+    // 如果不是高级模式，则返回0
     if (!advanceState.isAdvanced) {
       return 0;
     }
-    // For some special cases, you need to manually specify additional blank lines
+    // 某些特殊情况，需要手动指定额外的空行
     const emptySpan = unref(getProps).emptySpan || 0;
 
+    // 如果是数字，则直接返回
     if (isNumber(emptySpan)) {
       return emptySpan;
     }
+    // 如果是对象，则根据屏幕大小获取对应的空格子数量
     if (isObject(emptySpan)) {
       const { span = 0 } = emptySpan;
       const screen = unref(screenRef) as string;
@@ -49,12 +58,17 @@ export default function ({
     return 0;
   });
 
+  // 使用useDebounceFn函数创建一个防抖函数函数，参数为updateAdvanced函数和30
   const debounceUpdateAdvanced = useDebounceFn(updateAdvanced, 30);
 
+  // 使用 watch 监听 getSchema、advanceState.isAdvanced 和 realWidthRef 的值的变化,
+  // 当这些值发生变化时，如果 showAdvancedButton 为 true，则调用 debounceUpdateAdvanced 函数。
   watch(
     [() => unref(getSchema), () => advanceState.isAdvanced, () => unref(realWidthRef)],
     () => {
+      // 获取getProps中的showAdvancedButton属性
       const { showAdvancedButton } = unref(getProps);
+      // 如果showAdvancedButton为true，则调用debounceUpdateAdvanced函数
       if (showAdvancedButton) {
         debounceUpdateAdvanced();
       }
@@ -62,6 +76,12 @@ export default function ({
     { immediate: true },
   );
 
+  /**
+   * 定义 getAdvanced 函数：用于计算每个表单项在当前屏幕尺寸下的宽度，并根据宽度判断是否需要切换到高级模式
+   * @param itemCol
+   * @param itemColSum
+   * @param isLastAction
+   */
   function getAdvanced(itemCol: Partial<ColEx>, itemColSum = 0, isLastAction = false) {
     const width = unref(realWidthRef);
 
@@ -114,6 +134,10 @@ export default function ({
 
   const fieldsIsAdvancedMap = shallowReactive({});
 
+  /**
+   * 用于更新高级模式的状态。
+   * 遍历 getSchema 中的每个表单项，计算每个表单项的宽度，并根据宽度判断是否需要切换到高级模式。同时，更新 advanceState.actionSpan 和 advanceState.hideAdvanceBtn 的值
+   */
   function updateAdvanced() {
     let itemColSum = 0;
     let realItemColSum = 0;

@@ -94,13 +94,18 @@ export function openWindow(
 }
 
 // dynamic use hook props
+// 用于获取动态属性
 export function getDynamicProps<T extends Record<string, unknown>, U>(props: T): Partial<U> {
+  // 创建一个空对象
   const ret: Recordable = {};
 
+  // 遍历props的所有key
   Object.keys(props).map((key) => {
+    // 将props中的key对应的值赋值给ret
     ret[key] = unref((props as Recordable)[key]);
   });
 
+  // 返回ret，并将其转换为Partial<U>类型
   return ret as Partial<U>;
 }
 

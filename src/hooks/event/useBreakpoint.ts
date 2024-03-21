@@ -19,11 +19,17 @@ export interface CreateCallbackParams {
   sizeEnum: typeof sizeEnum;
 }
 
+// 导出一个函数，用于获取屏幕断点
 export function useBreakpoint() {
+  // 返回一个对象
   return {
+    // 获取全局屏幕引用
     screenRef: computed(() => unref(globalScreenRef)),
+    // 获取全局宽度引用
     widthRef: globalWidthRef,
+    // 获取屏幕枚举
     screenEnum,
+    // 获取真实宽度引用
     realWidthRef: globalRealWidthRef,
   };
 }

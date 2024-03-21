@@ -37,12 +37,15 @@
 
   async function customSubmitFunc() {
     try {
+      // 执行校验函数
       await validate();
+      // 设置提交按钮的属性
       setProps({
         submitButtonOptions: {
           loading: true,
         },
       });
+      // 设置延时函数，2s后将提交按钮的loading属性设置为false，并显示提交成功的消息
       setTimeout(() => {
         setProps({
           submitButtonOptions: {
@@ -52,6 +55,7 @@
         createMessage.success('提交成功！');
       }, 2000);
     } catch (error) {
+      // 打印错误信息
       console.error(error);
     }
   }
