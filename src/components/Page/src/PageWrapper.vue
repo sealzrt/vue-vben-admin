@@ -21,7 +21,7 @@
         <!-- <slot> 标签用于定义插槽的占位符，等待父组件提供插槽的内容 -->
         <slot name="headerContent" v-else></slot>
       </template>
-      <!-- 遍历 getHeaderSlots 计算属性，根据数组中的值动态创建 PageHeader 组件的 命名作用域插槽-->
+      <!-- 遍历 getHeaderSlots 计算属性，根据数组中的值动态创建 PageHeader 组件的 动态命名作用域插槽-->
       <!-- 对于每个 item，创建一个当前组件 PageWrapper 的命名作用域插槽，插槽名称与 item 的值相同。将 data 对象（如果 data 为假，则使用空对象）绑定到插槽-->
       <template #[item]="data" v-for="item in getHeaderSlots">
         <!-- <slot> 标签用于定义插槽的占位符，等待父组件提供插槽的内容 -->
@@ -97,7 +97,7 @@
     upwardSpace: propTypes.oneOfType([propTypes.number, propTypes.string]).def(0),
   });
 
-  // useAttrs：这个函数用于获取当前组件的属性（attrs）。在 Vue.js 2 中，组件的属性是通过 this.attrs 访问的。
+  // useAttrs：这个函数用于获取当前组件的attrs。在 Vue.js 2 中，组件的属性是通过 this.attrs 访问的。
   // 但在 Vue.js 3 中，this 不再指向组件实例，因此需要使用 useAttrs 函数来获取属性。useAttrs 函数返回一个对象，其中包含所有属性
   const attrs = useAttrs();
   // useSlots：这个函数用于获取当前组件的插槽（slots）。插槽是 Vue.js 中一种特殊的模板，用于在父组件中插入子组件的内容。在 Vue.js 2 中，插槽是通过 this.$slots 访问的。
