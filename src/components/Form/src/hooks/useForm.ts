@@ -60,14 +60,17 @@ export function useForm(props?: Props): UseFormReturnType {
     // 设置加载状态
     loadedRef.value = true;
 
-    // 监听表单属性，如果表单属性发生变化，则更新表单实例的属性
+    // 监听props的变化, 如果表单属性发生变化，则更新表单实例的属性
     watch(
       () => props,
       () => {
+        // 如果props存在，则设置实例的props为获取到的动态属性
         props && instance.setProps(getDynamicProps(props));
       },
       {
+        // 立即执行
         immediate: true,
+        // 深度监听
         deep: true,
       },
     );

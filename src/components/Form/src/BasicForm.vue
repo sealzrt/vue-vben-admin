@@ -111,9 +111,9 @@
   const defaultValueRef = ref({});
   /*** 用于判断是否已经初始化默认值的标记 ***/
   const isInitedDefaultRef = ref(false);
-  /*** 动态设置的props: 在父组件 使用 useForm 动态设置的props ***/
+  /*** 动态设置的props:  在 useForm 里动态设置的props, 包括设置 schema ***/
   const propsRef = ref<Partial<FormProps>>();
-  // 定义一个schemaRef变量
+  // 定义一个schemaRef变量, 根据属性
   const schemaRef = ref<FormSchema[] | null>(null);
   // form表单的 ref
   const formElRef = ref<FormActionType | null>(null);
@@ -149,7 +149,7 @@
   // 获取所有的 属性
   const getBindValue = computed(() => ({ ...attrs, ...props, ...unref(getProps) }) as AntFormProps);
 
-  // 计算属性: 获取schema
+  /**** 计算属性: 获取schema, 优先从 schemaRef获取, 其次从 getProps.schemas 获取  ****/
   const getSchema = computed((): FormSchema[] => {
     const schemas: FormSchema[] = unref(schemaRef) || (unref(getProps).schemas as any);
     // 遍历schemas
@@ -328,7 +328,7 @@
     { deep: true },
   );
 
-  /*** 在父组件 使用 useForm 动态设置 form props ***/
+  /*** 在useForm 动态设置 form props, 包括 schema ***/
   async function setProps(formProps: Partial<FormProps>): Promise<void> {
     // 将传入的属性与原有的属性进行深合并
     propsRef.value = deepMerge(unref(propsRef) || {}, formProps);
