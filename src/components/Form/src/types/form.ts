@@ -47,6 +47,9 @@ export type RegisterFn = (formInstance: FormActionType) => void;
 
 export type UseFormReturnType = [RegisterFn, FormActionType];
 
+/**
+ * BasicForm 的 Props 定义
+ */
 export interface FormProps {
   name?: string;
   layout?: 'vertical' | 'inline' | 'horizontal';

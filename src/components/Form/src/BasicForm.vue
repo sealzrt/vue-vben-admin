@@ -67,9 +67,10 @@
 
   defineOptions({ name: 'BasicForm' });
 
+  // 为了在声明 props 和 emits 选项时获得完整的类型推导支持，我们可以使用 defineProps 和 defineEmits API
   const props = defineProps(basicProps);
 
-  // 定义一个emit函数，用于触发事件
+  // 为了在声明 props 和 emits 选项时获得完整的类型推导支持，我们可以使用 defineProps 和 defineEmits API
   const emit = defineEmits([
     // 当高级表单切换时触发
     'advanced-change',
@@ -83,7 +84,7 @@
     'field-value-change',
   ]);
 
-  // 获取当前组件的属性
+  // 获取当前组件的属性, useSlots 和 useAttrs 是真实的运行时函数
   const attrs = useAttrs();
 
   // 创建一个响应式对象
@@ -91,7 +92,7 @@
   // 获取modal上下文
   const modalFn = useModalContext();
 
-  // 创建一个响应式对象advanceState，类型为AdvanceState
+  // 高级模式 state
   const advanceState = reactive<AdvanceState>({
     // 是否显示高级选项
     isAdvanced: true,
@@ -99,25 +100,25 @@
     hideAdvanceBtn: false,
     // 是否加载
     isLoad: false,
-    // 操作范围
+    // 操作span
     actionSpan: 6,
   });
 
-  // 定义一个defaultValueRef变量，用于存储默认值
+  /*** 默认值ref, 根据 getSchema 获取 并存储默认值 ***/
   const defaultValueRef = ref({});
-  // 定义一个isInitedDefaultRef变量，用于判断是否已经初始化默认值
+  /*** 用于判断是否已经初始化默认值的标记 ***/
   const isInitedDefaultRef = ref(false);
-  // 定义一个propsRef变量，用于存储FormProps类型的部分属性
+  /*** 动态设置的props: 在父组件 使用 useForm 动态设置的props ***/
   const propsRef = ref<Partial<FormProps>>();
-  // 定义一个schemaRef变量，用于存储FormSchema类型的数组
+  // 定义一个schemaRef变量
   const schemaRef = ref<FormSchema[] | null>(null);
-  // 定义一个formElRef变量，用于存储FormActionType类型的值
+  // form表单的 ref
   const formElRef = ref<FormActionType | null>(null);
 
   const { prefixCls } = useDesign('basic-form');
 
   // Get the basic configuration of the form
-  // 定义一个函数getProps，它是一个计算属性，用于获取表单的属性
+  /*** 计算属性: BasicForm的所有props, 包括父组件直接设置的props 和 在父组件 使用 useForm 动态设置的props ***/
   const getProps = computed(() => {
     // 将props和propsRef中的属性合并，并返回一个FormProps类型的对象
     return { ...props, ...unref(propsRef) } as FormProps;
@@ -324,7 +325,7 @@
     { deep: true },
   );
 
-  // 设置属性
+  /*** 在父组件 使用 useForm 动态设置 form props ***/
   async function setProps(formProps: Partial<FormProps>): Promise<void> {
     // 将传入的属性与原有的属性进行深合并
     propsRef.value = deepMerge(unref(propsRef) || {}, formProps);
@@ -389,6 +390,7 @@
     () => ({ ...getProps.value, ...advanceState }) as InstanceType<typeof FormAction>['$props'],
   );
 
+  /***** 定义: ref引用当前组件时 可暴露的 属性or方法; 在useForm实例中 可以对form实例进行调用 *****/
   defineExpose({
     ...formActionType,
   });
