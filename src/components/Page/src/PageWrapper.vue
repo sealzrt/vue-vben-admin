@@ -63,6 +63,11 @@
   } from 'vue';
   import PageFooter from './PageFooter.vue';
 
+  /**
+   * PageWrapper组件能够接收并验证多个属性，如标题、是否紧密排列、是否透明等；
+   * 能够获取父组件传递的属性及插槽；能够计算组件的类名、header样式等；
+   * 能够监听函数及重新计算页面高度
+   */
   defineOptions({
     name: 'PageWrapper',
     inheritAttrs: false,
