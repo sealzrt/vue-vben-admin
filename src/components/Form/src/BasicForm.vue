@@ -65,21 +65,24 @@
   import { cloneDeep } from 'lodash-es';
   import { TableActionType } from '@/components/Table';
 
+  /**
+   * 主要用于封装表单，提供表单基本的布局和样式，同时提供一些功能，如处理时间范围值、格式化时间等
+   */
   defineOptions({ name: 'BasicForm' });
 
   const props = defineProps(basicProps);
 
   // 定义一个emit函数，用于触发事件
   const emit = defineEmits([
-    // 当高级表单切换时触发
+    // 高级表单切换 事件
     'advanced-change',
-    // 当重置表单时触发
+    // 重置表单 事件
     'reset',
-    // 当提交表单时触发
+    // 提交表单 事件
     'submit',
-    // 当注册表单时触发
+    // 注册表单 事件
     'register',
-    // 当表单字段值改变时触发
+    // 表单字段值改变 事件
     'field-value-change',
   ]);
 
