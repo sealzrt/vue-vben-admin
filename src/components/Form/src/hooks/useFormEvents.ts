@@ -473,13 +473,18 @@ export function useFormEvents({
    * @param nameList
    */
   async function validate(nameList?: NamePath[] | false | undefined) {
+    // 定义一个变量_nameList，用于存储nameList的值
     let _nameList: any;
+    // 如果nameList的值为undefined，则调用getAllFields()函数获取所有的字段
     if (nameList === undefined) {
       _nameList = getAllFields();
+      // 如果nameList的值为数组，则将nameList的值赋值给_nameList
     } else {
       _nameList = nameList === Array.isArray(nameList) ? nameList : undefined;
     }
+    // 获取表单的值
     const values = await unref(formElRef)?.validate(_nameList);
+    // 处理表单的值
     return handleFormValues(values);
   }
 
@@ -504,21 +509,30 @@ export function useFormEvents({
    * 处理表单提交
    */
   async function handleSubmit(e?: Event): Promise<void> {
+    // 阻止表单的默认提交行为
     e && e.preventDefault();
+    // 获取 submitFunc 函数
     const { submitFunc } = unref(getProps);
+    // 如果 submitFunc 存在且是函数，则执行 submitFunc 函数
     if (submitFunc && isFunction(submitFunc)) {
       await submitFunc();
       return;
     }
+    // 获取表单元素
     const formEl = unref(formElRef);
+    // 如果表单元素不存在，则直接返回
     if (!formEl) return;
     try {
+      // 执行验证函数，获取表单值
       const values = await validate();
+      // 触发 submit 事件，传递表单值
       emit('submit', values);
     } catch (error: any) {
+      // 如果错误信息中的 outOfDate 为 false，并且 errorFields 存在，则直接返回
       if (error?.outOfDate === false && error?.errorFields) {
         return;
       }
+      // 否则抛出错误
       throw new Error(error);
     }
   }

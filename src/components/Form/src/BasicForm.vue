@@ -9,6 +9,7 @@
     <Row v-bind="getRow">
       <slot name="formHeader"></slot>
       <template v-for="schema in getSchema" :key="schema.field">
+        <!-- for循环 遍历字段-->
         <FormItem
           :isAdvanced="fieldsIsAdvancedMap[schema.field]"
           :tableAction="tableAction"
@@ -19,7 +20,13 @@
           :formModel="formModel"
           :setFormModel="setFormModel"
         >
+          <!--  FormItem的插槽内容, 动态插槽!!!
+                item 与 FormItem 的  schema.slot 配置key 保持一致, 不一致的会忽略
+                $slots: 是父组件传入的所有插槽的集合
+                data为FormItem 执行插槽函数时的 作用域插槽数据
+          -->
           <template #[item]="data" v-for="item in Object.keys($slots)">
+            <!-- 再次使用插槽, 保持key一致, 在父组件可以动态传递 表单项(字段) 的模板和数据-->
             <slot :name="item" v-bind="data || {}"></slot>
           </template>
         </FormItem>
@@ -93,7 +100,7 @@
   // 获取当前组件的属性, useSlots 和 useAttrs 是真实的运行时函数
   const attrs = useAttrs();
 
-  // 创建一个响应式对象
+  // 整个表单的数据
   const formModel = reactive({});
   // 获取modal上下文
   const modalFn = useModalContext();

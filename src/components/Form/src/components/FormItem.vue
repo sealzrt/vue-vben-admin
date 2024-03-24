@@ -367,10 +367,15 @@
       }
 
       function renderItem() {
+        // 解构出需要的属性
         const { itemProps, slot, render, field, suffix, component } = props.schema;
+        // 获取itemLabelWidthProp的值
         const { labelCol, wrapperCol } = unref(itemLabelWidthProp);
+        // 获取formProps的值
         const { colon } = props.formProps;
+        // 获取getDisable和getReadonly的值
         const opts = { disabled: unref(getDisable), readonly: unref(getReadonly) };
+        // 如果component的值为Divider，则渲染Divider组件
         if (component === 'Divider') {
           return (
             <Col span={24}>
@@ -378,6 +383,7 @@
             </Col>
           );
         } else if (component === 'BasicTitle') {
+          // 如果component的值为BasicTitle，则渲染BasicTitle组件
           return (
             <Form.Item
               labelCol={labelCol}
@@ -389,7 +395,9 @@
             </Form.Item>
           );
         } else {
+          // 否则渲染Form.Item组件
           const getContent = () => {
+            // 如果存在slot，则从slots中获取slot，否则执行render函数，否则渲染renderComponent函数
             return slot
               ? getSlot(slots, slot, unref(getValues), opts)
               : render
@@ -397,7 +405,9 @@
                 : renderComponent();
           };
 
+          // 判断是否存在suffix
           const showSuffix = !!suffix;
+          // 如果suffix是函数，则执行suffix函数，否则赋值suffix
           const getSuffix = isFunction(suffix) ? suffix(unref(getValues)) : suffix;
 
           // TODO 自定义组件验证会出现问题，因此这里框架默认将自定义组件设置手动触发验证，如果其他组件还有此问题请手动设置autoLink=false
@@ -409,6 +419,7 @@
               });
           }
 
+          // 渲染Form.Item组件
           return (
             <Form.Item
               name={field}
