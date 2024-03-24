@@ -139,7 +139,7 @@ export type WithInstall<T> = T & {
 
 export type CustomComponent = Component & { displayName?: string };
 
-// 导出一个带有install属性的函数，该函数接收一个自定义组件T和一个可选的别名参数
+// 给组件对象 添加一个install函数
 export const withInstall = <T extends CustomComponent>(component: T, alias?: string) => {
   // 将install属性添加到组件上
   (component as Record<string, unknown>).install = (app: App) => {

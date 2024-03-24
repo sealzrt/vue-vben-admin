@@ -17,6 +17,7 @@
   defineOptions({ name: 'FormBasicPage' });
 
   const { createMessage } = useMessage();
+  // debugger
   const [register, { validate, setProps }] = useForm({
     labelCol: {
       span: 8,

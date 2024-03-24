@@ -67,8 +67,11 @@
 
   /**
    * 主要用于封装表单，提供表单基本的布局和样式，同时提供一些功能，如处理时间范围值、格式化时间等
+   * 当组件挂载时，初始化默认值，并触发 'register' 事件，将 formActionType 作为参数传递
    */
   defineOptions({ name: 'BasicForm' });
+
+  // debugger
 
   // 为了在声明 props 和 emits 选项时获得完整的类型推导支持，我们可以使用 defineProps 和 defineEmits API
   const props = defineProps(basicProps);
@@ -113,7 +116,7 @@
   const isInitedDefaultRef = ref(false);
   /*** 动态设置的props:  在 useForm 里动态设置的props, 包括设置 schema ***/
   const propsRef = ref<Partial<FormProps>>();
-  // 定义一个schemaRef变量, 根据属性
+  /*** 根据props.schema 进行初始化, 后续的表单字段的改动 都是修改的该数据 ***/
   const schemaRef = ref<FormSchema[] | null>(null);
   // form表单的 ref
   const formElRef = ref<FormActionType | null>(null);
@@ -123,6 +126,7 @@
   // Get the basic configuration of the form
   /*** 计算属性: BasicForm的所有props, 包括父组件直接设置的props 和 在父组件 使用 useForm 动态设置的props ***/
   const getProps = computed(() => {
+    // debugger
     // 将props和propsRef中的属性合并，并返回一个FormProps类型的对象
     return { ...props, ...unref(propsRef) } as FormProps;
   });
@@ -151,6 +155,7 @@
 
   /**** 计算属性: 获取schema, 优先从 schemaRef获取, 其次从 getProps.schemas 获取  ****/
   const getSchema = computed((): FormSchema[] => {
+    // debugger
     const schemas: FormSchema[] = unref(schemaRef) || (unref(getProps).schemas as any);
     // 遍历schemas
     for (const schema of schemas) {
@@ -276,6 +281,7 @@
   watch(
     () => unref(getProps).model,
     () => {
+      // debugger
       // 获取 getProps.model 的值
       const { model } = unref(getProps);
       // 如果 model 为空，则直接返回
@@ -297,7 +303,7 @@
     },
   );
 
-  // 监听 schema 的变化
+  // 监听 schema 表单字段的变化, 调整高度
   watch(
     () => getSchema.value,
     (schema) => {
@@ -330,7 +336,7 @@
 
   /*** 在useForm 动态设置 form props, 包括 schema ***/
   async function setProps(formProps: Partial<FormProps>): Promise<void> {
-    // 将传入的属性与原有的属性进行深合并
+    // 存储动态设置的form props
     propsRef.value = deepMerge(unref(propsRef) || {}, formProps);
   }
 
@@ -402,6 +408,7 @@
    * 当组件挂载时，初始化默认值，并触发 'register' 事件，将 formActionType 作为参数传递
    */
   onMounted(() => {
+    // debugger
     initDefault();
     emit('register', formActionType);
   });

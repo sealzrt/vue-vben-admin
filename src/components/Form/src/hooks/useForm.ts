@@ -22,6 +22,7 @@ type Props = Partial<DynamicProps<FormProps>>;
  * @param props
  */
 export function useForm(props?: Props): UseFormReturnType {
+  // debugger
   // 定义formRef变量，类型为Nullable<FormActionType>
   const formRef = ref<Nullable<FormActionType>>(null);
   // 定义loadedRef变量，类型为Nullable<boolean>
@@ -44,8 +45,13 @@ export function useForm(props?: Props): UseFormReturnType {
     return form as FormActionType;
   }
 
-  // 注册函数，用于注册表单实例
+  /**
+   * 注册函数，用于注册表单实例
+   * 当 BasicForm 组件挂载时，触发 'register' 事件，将 formActionType 作为参数传递, 调用该register回调
+   * @param instance
+   */
   function register(instance: FormActionType) {
+    // debugger
     // 如果是生产模式，则在组件卸载时清空表单实例和加载状态
     isProdMode() &&
       onUnmounted(() => {
@@ -60,7 +66,7 @@ export function useForm(props?: Props): UseFormReturnType {
     // 设置加载状态
     loadedRef.value = true;
 
-    // 监听props的变化, 如果表单属性发生变化，则更新表单实例的属性
+    /*** watch可以放在函数内, 立即执行! 监听props的变化, 如果表单属性发生变化，则更新表单实例的属性 ***/
     watch(
       () => props,
       () => {

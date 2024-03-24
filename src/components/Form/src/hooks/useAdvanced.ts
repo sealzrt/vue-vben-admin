@@ -66,6 +66,7 @@ export default function ({
   watch(
     [() => unref(getSchema), () => advanceState.isAdvanced, () => unref(realWidthRef)],
     () => {
+      // debugger
       // 获取getProps中的showAdvancedButton属性
       const { showAdvancedButton } = unref(getProps);
       // 如果showAdvancedButton为true，则调用debounceUpdateAdvanced函数

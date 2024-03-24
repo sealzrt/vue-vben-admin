@@ -119,7 +119,7 @@ export const basicProps = {
   colon: propTypes.bool,
 
   // 标签对齐方式
-  labelAlign,
+  labelAlign: propTypes.string,
 
   // rowProps：对象作为PropType<RowProps>的属性
   rowProps: Object as PropType<RowProps>,
