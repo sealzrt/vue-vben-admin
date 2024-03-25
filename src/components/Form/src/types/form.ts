@@ -185,7 +185,7 @@ interface BaseFormSchema<T extends ComponentType = any> {
   // 默认值
   defaultValue?: any;
 
-  // 额外默认值数组对象
+  // 默认值对象
   defaultValueObj?: { [key: string]: any };
 
   // 是否自动处理与时间相关组件的默认值

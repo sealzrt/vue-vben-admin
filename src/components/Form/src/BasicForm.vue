@@ -81,6 +81,7 @@
   // debugger
 
   // 为了在声明 props 和 emits 选项时获得完整的类型推导支持，我们可以使用 defineProps 和 defineEmits API
+  /*** 定义props类型和默认值 ***/
   const props = defineProps(basicProps);
 
   // 为了在声明 props 和 emits 选项时获得完整的类型推导支持，我们可以使用 defineProps 和 defineEmits API
@@ -131,7 +132,7 @@
   const { prefixCls } = useDesign('basic-form');
 
   // Get the basic configuration of the form
-  /*** 计算属性: BasicForm的所有props, 包括父组件直接设置的props 和 在父组件 使用 useForm 动态设置的props ***/
+  /*** 计算属性: BasicForm的所有props, 包括父组件直接设置的props 和 在父组件 使用 useForm/setProps 动态设置的props ***/
   const getProps = computed(() => {
     // debugger
     // 将props和propsRef中的属性合并，并返回一个FormProps类型的对象
@@ -160,7 +161,7 @@
   // 获取所有的 属性
   const getBindValue = computed(() => ({ ...attrs, ...props, ...unref(getProps) }) as AntFormProps);
 
-  /**** 计算属性: 获取schema, 优先从 schemaRef获取, 其次从 getProps.schemas 获取  ****/
+  /**** 计算属性: 获取schema集合, 优先从 schemaRef获取, 其次从 getProps.schemas 获取  ****/
   const getSchema = computed((): FormSchema[] => {
     // debugger
     const schemas: FormSchema[] = unref(schemaRef) || (unref(getProps).schemas as any);
@@ -284,7 +285,7 @@
     submitAction: handleSubmit,
   });
 
-  // 监听 getProps.model 的变化
+  // 监听: 如果 getProps.model 有变化, 更新表单项的数据
   watch(
     () => unref(getProps).model,
     () => {
@@ -302,7 +303,7 @@
     },
   );
 
-  // 当props.schemas发生变化时，调用resetSchema函数，并将schemas作为参数传入
+  // 监听: props.schemas发生变化时，重新设置表单项/字段
   watch(
     () => props.schemas,
     (schemas) => {
@@ -310,7 +311,7 @@
     },
   );
 
-  // 监听 schema 表单字段的变化, 调整高度
+  /*** 监听 schema 表单字段的变化, 调整高度 和 初始化默认值 ***/
   watch(
     () => getSchema.value,
     (schema) => {
@@ -331,7 +332,7 @@
     },
   );
 
-  // 使用watch监听formModel的变化
+  // 使用watch监听formModel的变化, 判断是否需要自动提交
   watch(
     () => formModel,
     useDebounceFn(() => {

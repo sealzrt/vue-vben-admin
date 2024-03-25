@@ -27,41 +27,53 @@
 
   export default defineComponent({
     name: 'BasicFormItem',
-    inheritAttrs: false,
+    inheritAttrs: false, // 禁止继承父组件属性
     props: {
       schema: {
+        // 表单项/字段 配置
         type: Object as PropType<FormSchema>,
         default: () => ({}),
       },
       formProps: {
+        // basicForm的所有属性
         type: Object as PropType<FormProps>,
         default: () => ({}),
       },
       allDefaultValues: {
+        // 所有默认值
         type: Object as PropType<Recordable<any>>,
         default: () => ({}),
       },
       formModel: {
+        // 表单模型, 包含所有的数据
         type: Object as PropType<Recordable<any>>,
         default: () => ({}),
       },
       setFormModel: {
+        // 设置 表单项/字段 的值
         type: Function as PropType<(key: string, value: any, schema: FormSchema) => void>,
         default: null,
       },
       tableAction: {
+        // 表格操作
         type: Object as PropType<TableActionType>,
       },
       formActionType: {
+        // 表单操作
         type: Object as PropType<FormActionType>,
       },
       isAdvanced: {
+        // 是否高级表单
         type: Boolean,
       },
     },
     setup(props, { slots }) {
+      // 多语言
       const { t } = useI18n();
 
+      // 注意: props.xxx 不要直接解构，这样会让数据失去响应性，一旦父组件发生数据变化，解构后的变量将无法同步更新为最新的值。
+      // toRefs: 创建一个新的对象，它的每个字段都是 Reactive 对象各个字段的 Ref 变量; 使用 toRefs 就可以结构props
+      /*** 借助toRefs 从props里结构 schema 和 formProps, 同时保证响应性 ***/
       const { schema, formProps } = toRefs(props) as {
         schema: Ref<FormSchema>;
         formProps: Ref<FormProps>;
@@ -75,27 +87,47 @@
 
       const itemLabelWidthProp = useItemLabelWidth(schema, formProps);
 
+      /**
+       * 计算属性, 数据集合
+       */
       const getValues = computed(() => {
+        // 获取props中的参数
         const { allDefaultValues, formModel, schema } = props;
+        // 获取props中的formProps
         const { mergeDynamicData } = props.formProps;
+        // 返回一个对象
         return {
+          // 字段
           field: schema.field,
+          // 表单模型
           model: formModel,
+          // 值
           values: {
+            // 合并动态数据
             ...mergeDynamicData,
+            // 合并默认值
             ...allDefaultValues,
+            // 合并表单模型
             ...formModel,
           } as Recordable<any>,
+          // 表单规则
           schema: schema,
         };
       });
 
+      /**
+       * 获取组件的属性
+       */
       const getComponentsProps = computed(() => {
+        // 获取props中的参数
         const { schema, tableAction, formModel, formActionType } = props;
+        // 获取组件属性
         let { componentProps = {} } = schema;
+        // 如果组件属性是函数，则执行函数并获取返回值
         if (isFunction(componentProps)) {
           componentProps = componentProps({ schema, tableAction, formModel, formActionType }) ?? {};
         }
+        // 如果组件是简单组件，则添加默认属性
         if (isIncludeSimpleComponents(schema.component)) {
           componentProps = Object.assign(
             { type: 'horizontal' },
@@ -106,65 +138,97 @@
             componentProps,
           );
         }
+        // 返回组件属性
         return componentProps as Recordable<any>;
       });
 
+      /*** 计算属性，用于判断当前表单项是否禁用 ***/
       const getDisable = computed(() => {
+        // 获取表单全局禁用状态
         const { disabled: globDisabled } = props.formProps;
+        // 获取表单项动态禁用状态
         const { dynamicDisabled } = props.schema;
+        // 获取表单项组件禁用状态
         const { disabled: itemDisabled = false } = unref(getComponentsProps);
+        // 初始化禁用状态为全局禁用状态或表单项组件禁用状态
         let disabled = !!globDisabled || itemDisabled;
+        // 如果动态禁用状态为布尔值
         if (isBoolean(dynamicDisabled)) {
+          // 将动态禁用状态赋值给禁用状态
           disabled = dynamicDisabled;
         }
+        // 如果动态禁用状态为函数
         if (isFunction(dynamicDisabled)) {
+          // 将动态禁用状态函数执行，并将执行结果赋值给禁用状态
           disabled = dynamicDisabled(unref(getValues));
         }
+        // 返回禁用状态
         return disabled;
       });
 
+      /*** 计算属性, getReadonly，用于计算只读属性 ***/
       const getReadonly = computed(() => {
+        // 从props中获取formProps和schema
         const { readonly: globReadonly } = props.formProps;
         const { dynamicReadonly } = props.schema;
+        // 从组件属性中获取只读属性
         const { readonly: itemReadonly = false } = unref(getComponentsProps);
 
+        // 初始化只读属性为全局只读属性和组件只读属性的或运算
         let readonly = globReadonly || itemReadonly;
+        // 如果动态只读属性是布尔值，则只读属性等于动态只读属性
         if (isBoolean(dynamicReadonly)) {
           readonly = dynamicReadonly;
         }
+        // 如果动态只读属性是函数，则只读属性等于动态只读函数的返回值
         if (isFunction(dynamicReadonly)) {
           readonly = dynamicReadonly(unref(getValues));
         }
+        // 返回只读属性
         return readonly;
       });
 
+      /**
+       * 函数getShow()用于获取isShow和isIfShow的值
+       */
       function getShow(): { isShow: boolean; isIfShow: boolean } {
+        // 获取schema中的show和ifShow属性
         const { show, ifShow } = props.schema;
+        // 获取formProps中的showAdvancedButton属性
         const { showAdvancedButton } = props.formProps;
+        // 判断是否为高级选项
         const itemIsAdvanced = showAdvancedButton
           ? isBoolean(props.isAdvanced)
             ? props.isAdvanced
             : true
           : true;
 
+        // 初始化isShow和isIfShow的值为true
         let isShow = true;
         let isIfShow = true;
 
+        // 如果show的值为boolean类型，则将isShow的值赋值为show
         if (isBoolean(show)) {
           isShow = show;
         }
+        // 如果ifShow的值为boolean类型，则将isIfShow的值赋值为ifShow
         if (isBoolean(ifShow)) {
           isIfShow = ifShow;
         }
+        // 如果show的值为function类型，则将isShow的值赋值为show函数的返回值
         if (isFunction(show)) {
           isShow = show(unref(getValues));
         }
+        // 如果ifShow的值为function类型，则将isIfShow的值赋值为ifShow函数的返回值
         if (isFunction(ifShow)) {
           isIfShow = ifShow(unref(getValues));
         }
+        // 将isShow的值与itemIsAdvanced进行与运算
         isShow = isShow && itemIsAdvanced;
+        // 返回isShow和isIfShow的值
         return { isShow, isIfShow };
       }
+
       function handleRules(): ValidationRule[] {
         const {
           rules: defRules = [],
@@ -189,8 +253,15 @@
           ? createPlaceholderMessage(component) + assertLabel
           : assertLabel;
 
+        /**
+         * 验证
+         * @param rule
+         * @param value
+         */
         function validator(rule: any, value: any) {
+          // 获取rule中的message，如果没有则获取默认的message
           const msg = rule.message || defaultMsg;
+          // 如果value为空，则返回错误信息
           if (value === undefined || isNull(value)) {
             // 空值
             return Promise.reject(msg);
@@ -212,8 +283,10 @@
             // 非关联选择的tree组件
             return Promise.reject(msg);
           }
+          // 如果都不是，则返回成功信息
           return Promise.resolve();
         }
+
         const getRequired = isFunction(required) ? required(unref(getValues)) : required;
 
         /*
@@ -267,10 +340,15 @@
         return rules;
       }
 
+      /**
+       * 渲染组件
+       */
       function renderComponent() {
+        // 如果props.schema不是组件表单模式，则返回null
         if (!isComponentFormSchema(props.schema)) {
           return null;
         }
+        // 获取props.schema中的属性
         const {
           renderComponentContent,
           component,
@@ -279,10 +357,13 @@
           valueField,
         } = props.schema;
 
+        // 判断component是否为Switch或Checkbox
         const isCheck = component && ['Switch', 'Checkbox'].includes(component);
 
+        // 获取changeEvent的key
         const eventKey = `on${upperFirst(changeEvent)}`;
 
+        // 定义on事件
         const on = {
           [eventKey]: (...args: Nullable<Recordable<any>>[]) => {
             const [e] = args;
@@ -296,9 +377,12 @@
             }
           },
         };
+        // 获取Comp组件
         const Comp = componentMap.get(component) as ReturnType<typeof defineComponent>;
 
+        // 获取props.formProps中的属性
         const { autoSetPlaceHolder, size } = props.formProps;
+        // 定义propsData
         const propsData: Recordable<any> = {
           allowClear: true,
           size,
@@ -307,28 +391,35 @@
           readonly: unref(getReadonly),
         };
 
+        // 判断是否需要设置占位符
         const isCreatePlaceholder = !propsData.disabled && autoSetPlaceHolder;
-        // RangePicker place is an array
+        // RangePicker占位符是数组
         if (isCreatePlaceholder && component !== 'RangePicker' && component) {
           propsData.placeholder =
             unref(getComponentsProps)?.placeholder || createPlaceholderMessage(component);
         }
+        // 定义propsData
         propsData.codeField = field;
         propsData.formValues = unref(getValues);
 
+        // 定义bindValue
         const bindValue: Recordable<any> = {
           [valueField || (isCheck ? 'checked' : 'value')]: props.formModel[field],
         };
 
+        // 定义compAttr
         const compAttr: Recordable<any> = {
           ...propsData,
           ...on,
           ...bindValue,
         };
 
+        // 如果没有renderComponentContent，则直接渲染Comp组件
         if (!renderComponentContent) {
           return <Comp {...compAttr} />;
         }
+
+        /*** 插槽 ***/
         const compSlot = isFunction(renderComponentContent)
           ? {
               ...renderComponentContent(unref(getValues), {

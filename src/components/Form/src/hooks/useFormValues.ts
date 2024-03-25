@@ -206,7 +206,7 @@ export function useFormValues({
 
   /**
    * 初始化默认值。
-   * 这个函数会遍历 schema，将默认值和默认值对象赋值给 obj 对象。然后将 obj 对象的值赋值给 defaultValueRef 和 formModel。
+   * 这个函数会遍历 schema数组，将默认值和默认值对象赋值给 obj 对象。然后将 obj 对象的值赋值给 defaultValueRef 和 formModel。
    */
   function initDefault() {
     // 获取schema
@@ -215,11 +215,11 @@ export function useFormValues({
     const obj: Recordable = {};
     // 遍历schema
     schemas.forEach((item) => {
-      // 获取默认值和默认值对象
+      /*** 默认值可以是 Object 也可以是 其他类型 ***/
       const { defaultValue, defaultValueObj } = item;
-      // 获取默认值对象的key
+      /*** 判断 默认值对象 defaultValueObj ***/
       const fieldKeys = Object.keys(defaultValueObj || {});
-      // 如果默认值对象的key存在
+      // 如果默认值对象 存在
       if (fieldKeys.length) {
         // 遍历默认值对象的key
         fieldKeys.map((field) => {
@@ -231,7 +231,8 @@ export function useFormValues({
           }
         });
       }
-      // 如果默认值存在
+      /*** 判断 默认值 defaultValue ***/
+      // 如果默认值 存在.   isNil: 检查 value 是否是 null 或者 undefined。
       if (!isNil(defaultValue)) {
         // 将默认值赋值给obj
         obj[item.field] = defaultValue;
