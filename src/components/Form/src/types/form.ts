@@ -233,7 +233,7 @@ export interface ComponentFormSchema<T extends ComponentType = any> extends Base
 }
 
 export interface SlotFormSchema extends BaseFormSchema {
-  // Custom slot, in form-item
+  /*** Custom slot, in form-item; 自定义插槽 ***/
   slot: string;
 }
 

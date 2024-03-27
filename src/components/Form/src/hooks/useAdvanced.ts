@@ -83,9 +83,12 @@ export default function ({
    * @param itemColSum
    * @param isLastAction
    */
+  // 根据传入的itemCol参数，计算当前屏幕宽度下，该列的宽度
   function getAdvanced(itemCol: Partial<ColEx>, itemColSum = 0, isLastAction = false) {
+    // 获取当前屏幕宽度
     const width = unref(realWidthRef);
 
+    // 计算md宽度
     const mdWidth =
       parseInt(itemCol.md as string) ||
       parseInt(itemCol.xs as string) ||
@@ -93,9 +96,13 @@ export default function ({
       (itemCol.span as number) ||
       BASIC_COL_LEN;
 
+    // 计算lg宽度
     const lgWidth = parseInt(itemCol.lg as string) || mdWidth;
+    // 计算xl宽度
     const xlWidth = parseInt(itemCol.xl as string) || lgWidth;
+    // 计算xxl宽度
     const xxlWidth = parseInt(itemCol.xxl as string) || xlWidth;
+    // 根据当前屏幕宽度，计算该列的宽度
     if (width <= screenEnum.LG) {
       itemColSum += mdWidth;
     } else if (width < screenEnum.XL) {
@@ -106,29 +113,31 @@ export default function ({
       itemColSum += xxlWidth;
     }
 
+    // 如果是最后一个操作，则更新高级按钮的显示状态
     if (isLastAction) {
       advanceState.hideAdvanceBtn = false;
+      // 如果当前列宽度小于等于2行，则隐藏高级按钮
       if (itemColSum <= BASIC_COL_LEN * 2) {
-        // When less than or equal to 2 lines, the collapse and expand buttons are not displayed
         advanceState.hideAdvanceBtn = true;
         advanceState.isAdvanced = true;
       } else if (
+        // 如果当前列宽度大于3行，则默认折叠
         itemColSum > BASIC_COL_LEN * 2 &&
         itemColSum <= BASIC_COL_LEN * (unref(getProps).autoAdvancedLine || 3)
       ) {
         advanceState.hideAdvanceBtn = false;
-
-        // More than 3 lines collapsed by default
       } else if (!advanceState.isLoad) {
+        // 如果当前列宽度大于1行，则默认展开
         advanceState.isLoad = true;
         advanceState.isAdvanced = !advanceState.isAdvanced;
       }
       return { isAdvanced: advanceState.isAdvanced, itemColSum };
     }
+    // 如果当前列宽度大于1行，则显示高级按钮
     if (itemColSum > BASIC_COL_LEN * (unref(getProps).alwaysShowLines || 1)) {
       return { isAdvanced: advanceState.isAdvanced, itemColSum };
     } else {
-      // The first line is always displayed
+      // 如果是第一行，则始终显示
       return { isAdvanced: true, itemColSum };
     }
   }
@@ -139,19 +148,26 @@ export default function ({
    * 用于更新高级模式的状态。
    * 遍历 getSchema 中的每个表单项，计算每个表单项的宽度，并根据宽度判断是否需要切换到高级模式。同时，更新 advanceState.actionSpan 和 advanceState.hideAdvanceBtn 的值
    */
+  // 更新高级功能
   function updateAdvanced() {
+    // 初始化变量
     let itemColSum = 0;
     let realItemColSum = 0;
+    // 获取基本列属性
     const { baseColProps = {} } = unref(getProps);
 
+    // 遍历schema
     for (const schema of unref(getSchema)) {
+      // 获取显示属性
       const { show, colProps } = schema;
       let isShow = true;
 
+      // 如果显示属性是布尔值
       if (isBoolean(show)) {
         isShow = show;
       }
 
+      // 如果显示属性是函数
       if (isFunction(show)) {
         isShow = show({
           schema: schema,
@@ -164,12 +180,15 @@ export default function ({
         });
       }
 
+      // 如果显示并且有列属性
       if (isShow && (colProps || baseColProps)) {
+        // 获取高级属性
         const { itemColSum: sum, isAdvanced } = getAdvanced(
           { ...baseColProps, ...colProps },
           itemColSum,
         );
 
+        // 更新变量
         itemColSum = sum || 0;
         if (isAdvanced) {
           realItemColSum = itemColSum;
@@ -178,13 +197,16 @@ export default function ({
       }
     }
 
-    // 确保页面发送更新
+    /*** 确保页面发送更新 ***/
     vm?.proxy?.$forceUpdate();
 
+    // 更新高级属性
     advanceState.actionSpan = (realItemColSum % BASIC_COL_LEN) + unref(getEmptySpan);
 
+    // 获取高级属性
     getAdvanced(unref(getProps).actionColOptions || { span: BASIC_COL_LEN }, itemColSum, true);
 
+    // 触发高级属性改变事件
     emit('advanced-change');
   }
 

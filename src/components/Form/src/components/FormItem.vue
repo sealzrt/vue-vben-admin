@@ -73,7 +73,7 @@
 
       // 注意: props.xxx 不要直接解构，这样会让数据失去响应性，一旦父组件发生数据变化，解构后的变量将无法同步更新为最新的值。
       // toRefs: 创建一个新的对象，它的每个字段都是 Reactive 对象各个字段的 Ref 变量; 使用 toRefs 就可以结构props
-      /*** 借助toRefs 从props里结构 schema 和 formProps, 同时保证响应性 ***/
+      /*** 借助toRefs 从props里解构 schema 和 formProps, 同时保证响应性 ***/
       const { schema, formProps } = toRefs(props) as {
         schema: Ref<FormSchema>;
         formProps: Ref<FormProps>;
@@ -189,7 +189,7 @@
       });
 
       /**
-       * 函数getShow()用于获取isShow和isIfShow的值
+       * 该函数主要用于判断当前项是否需要显示，以及是否需要根据条件显示
        */
       function getShow(): { isShow: boolean; isIfShow: boolean } {
         // 获取schema中的show和ifShow属性
@@ -532,25 +532,37 @@
       }
 
       return () => {
+        // 获取props中的schema属性
         const { colProps = {}, colSlot, renderColContent, component, slot } = props.schema;
+        // 如果componentMap中没有component，并且没有slot，则返回null
         if (!((component && componentMap.has(component)) || slot)) {
           return null;
         }
 
+        // 获取props中的formProps属性
         const { baseColProps = {} } = props.formProps;
+        // 将baseColProps和colProps合并, 获取列属性
         const realColProps = { ...baseColProps, ...colProps };
+        // 获取isIfShow和isShow
         const { isIfShow, isShow } = getShow();
+        // 获取getValues的值
         const values = unref(getValues);
+        // 获取disabled和readonly
         const opts = { disabled: unref(getDisable), readonly: unref(getReadonly) };
 
+        // 定义一个函数，用于获取内容
         const getContent = () => {
+          // 如果有colSlot，则获取slot
           return colSlot
             ? getSlot(slots, colSlot, values, opts)
-            : renderColContent
+            : // 如果有renderColContent，则调用renderColContent
+              renderColContent
               ? renderColContent(values, opts)
-              : renderItem();
+              : // 否则调用renderItem
+                renderItem();
         };
 
+        // 如果isIfShow为true，则返回Col组件
         return (
           isIfShow && (
             <Col {...realColProps} v-show={isShow}>

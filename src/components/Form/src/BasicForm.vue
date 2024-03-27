@@ -21,7 +21,7 @@
           :setFormModel="setFormModel"
         >
           <!--  FormItem的插槽内容, 动态插槽!!!
-                item 与 FormItem 的  schema.slot 配置key 保持一致, 不一致的会忽略
+                #[item]动态插槽key 与 FormItem 的 schema.slot 配置key 保持一致, 不一致的会忽略
                 $slots: 是父组件传入的所有插槽的集合
                 data为FormItem 执行插槽函数时的 作用域插槽数据
           -->
@@ -158,7 +158,7 @@
     };
   });
 
-  // 获取所有的 属性
+  /*** 获取所有的属性: 声明的props(包括默认值), 未声明的父组件传递的attrs, 动态设置的props ***/
   const getBindValue = computed(() => ({ ...attrs, ...props, ...unref(getProps) }) as AntFormProps);
 
   /**** 计算属性: 获取schema集合, 优先从 schemaRef获取, 其次从 getProps.schemas 获取  ****/
