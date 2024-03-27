@@ -110,7 +110,7 @@
             // 合并表单模型
             ...formModel,
           } as Recordable<any>,
-          // 表单规则
+          // 表单项/字段 配置
           schema: schema,
         };
       });
@@ -488,7 +488,7 @@
         } else {
           // 否则渲染Form.Item组件
           const getContent = () => {
-            // 如果存在slot，则从slots中获取slot，否则执行render函数，否则渲染renderComponent函数
+            // 如果存在slot，则从slots中获取slot，其次执行render函数，否则渲染renderComponent函数
             return slot
               ? getSlot(slots, slot, unref(getValues), opts)
               : render
@@ -550,9 +550,9 @@
         // 获取disabled和readonly
         const opts = { disabled: unref(getDisable), readonly: unref(getReadonly) };
 
-        // 定义一个函数，用于获取内容
+        // 用于获取内容
         const getContent = () => {
-          // 如果有colSlot，则获取slot
+          /*** 优先级: colSlot > renderColContent > 默认(包括: 'slot') ***/
           return colSlot
             ? getSlot(slots, colSlot, values, opts)
             : // 如果有renderColContent，则调用renderColContent
