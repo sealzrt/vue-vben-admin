@@ -48,17 +48,23 @@
 
   defineOptions({ name: 'TableAction' });
 
+  // 定义props属性
   const props = defineProps({
+    // actions类型为ActionItem数组，默认值为null
     actions: {
       type: Array as PropType<ActionItem[]>,
       default: null,
     },
+    // dropDownActions类型为ActionItem数组，默认值为null
     dropDownActions: {
       type: Array as PropType<ActionItem[]>,
       default: null,
     },
+    // divider类型为bool，默认值为true
     divider: propTypes.bool.def(true),
+    // outside类型为bool, 操作按钮 是否在BasicTable外部 提供
     outside: propTypes.bool,
+    // stopButtonPropagation类型为bool，默认值为false
     stopButtonPropagation: propTypes.bool.def(false),
   });
 
@@ -69,6 +75,7 @@
   }
 
   const { hasPermission } = usePermission();
+
   function isIfShow(action: ActionItem): boolean {
     const ifShow = action.ifShow;
 
@@ -83,63 +90,99 @@
     return isIfShow;
   }
 
+  // 计算属性，用于获取操作按钮
   const getActions = computed(() => {
-    return (toRaw(props.actions) || [])
-      .filter((action) => {
-        return hasPermission(action.auth) && isIfShow(action);
-      })
-      .map((action) => {
-        const { popConfirm } = action;
-        return {
-          getPopupContainer: () => unref((table as any)?.wrapRef) ?? document.body,
-          type: 'link',
-          size: 'small',
-          ...action,
-          ...(popConfirm || {}),
-          onConfirm: popConfirm?.confirm,
-          onCancel: popConfirm?.cancel,
-          enable: !!popConfirm,
-        };
-      });
+    // 获取传入的actions属性，如果没有则设置为空数组
+    return (
+      (toRaw(props.actions) || [])
+        // 过滤掉没有权限和不需要显示的操作按钮
+        .filter((action) => {
+          return hasPermission(action.auth) && isIfShow(action);
+        })
+        // 将操作按钮映射成一个新的对象
+        .map((action) => {
+          // 获取操作按钮的popConfirm属性
+          const { popConfirm } = action;
+          // 返回一个新的对象
+          return {
+            // 获取弹出框的父元素
+            getPopupContainer: () => unref((table as any)?.wrapRef) ?? document.body,
+            // 类型为link
+            type: 'link',
+            // 尺寸为small
+            size: 'small',
+            // 合并传入的操作按钮属性
+            ...action,
+            // 合并传入的popConfirm属性
+            ...(popConfirm || {}),
+            // 确认事件
+            onConfirm: popConfirm?.confirm,
+            // 取消事件
+            onCancel: popConfirm?.cancel,
+            // 是否启用
+            enable: !!popConfirm,
+          };
+        })
+    );
   });
 
+  // 计算属性getDropdownList，用于获取下拉列表的操作按钮
   const getDropdownList = computed((): any[] => {
+    // 获取props中的dropDownActions属性，如果没有则赋值为空数组
     const list = (toRaw(props.dropDownActions) || []).filter((action) => {
+      // 判断是否有权限，并且是否显示
       return hasPermission(action.auth) && isIfShow(action);
     });
+    // 遍历list，将action中的label和popConfirm属性映射到新的对象中
     return list.map((action, index) => {
       const { label, popConfirm } = action;
+      // 返回新的对象
       return {
         ...action,
         ...popConfirm,
         onConfirm: popConfirm?.confirm,
         onCancel: popConfirm?.cancel,
         text: label,
+        // 判断是否为最后一个元素，如果是则不显示分割线
         divider: index < list.length - 1 ? props.divider : false,
       };
     });
   });
 
+  // 定义一个函数getAlign，它是一个计算属性，用于获取表格中操作列的对其方式
   const getAlign = computed(() => {
+    // 获取表格的列信息，如果没有则默认为空数组
     const columns = (table as TableActionType)?.getColumns?.() || [];
+    // 查找标记为ACTION_COLUMN_FLAG的列
     const actionColumn = columns.find((item) => item.flag === ACTION_COLUMN_FLAG);
+    // 如果没有找到，则默认值为'left'
     return actionColumn?.align ?? 'left';
   });
 
+  // 定义一个函数，用于获取tooltip的属性
   function getTooltip(data: string | TooltipProps): TooltipProps {
+    // 返回一个对象，用于设置tooltip的属性
     return {
+      // 获取弹出框的容器，如果table存在wrapRef，则使用table的wrapRef，否则使用document.body
       getPopupContainer: () => unref((table as any)?.wrapRef) ?? document.body,
+      // 设置tooltip的位置为bottom
       placement: 'bottom',
+      // 如果data是字符串，则设置tooltip的title为data，否则使用data中的属性
       ...(isString(data) ? { title: data } : data),
     };
   }
 
+  // 当单元格被点击时触发
   function onCellClick(e: MouseEvent) {
+    // 如果stopButtonPropagation属性为false，则直接返回
     if (!props.stopButtonPropagation) return;
+    // 获取点击事件的路径
     const path = e.composedPath() as HTMLElement[];
+    // 遍历路径，查找是否有按钮元素
     const isInButton = path.find((ele) => {
       return ele.tagName?.toUpperCase() === 'BUTTON';
     });
+    // 如果找到了按钮元素，则阻止事件传播
     isInButton && e.stopPropagation();
   }
 </script>

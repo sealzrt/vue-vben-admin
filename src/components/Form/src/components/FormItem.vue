@@ -414,7 +414,7 @@
           ...bindValue,
         };
 
-        // 如果没有renderComponentContent，则直接渲染Comp组件
+        /*** 如果没有renderComponentContent，则直接渲染Comp组件 ***/
         if (!renderComponentContent) {
           return <Comp {...compAttr} />;
         }
@@ -532,6 +532,7 @@
       }
 
       return () => {
+        // debugger
         // 获取props中的schema属性
         const { colProps = {}, colSlot, renderColContent, component, slot } = props.schema;
         // 如果componentMap中没有component，并且没有slot，则返回null
@@ -562,7 +563,7 @@
                 renderItem();
         };
 
-        // 如果isIfShow为true，则返回Col组件
+        // 如果isIfShow为true，渲染Col组件
         return (
           isIfShow && (
             <Col {...realColProps} v-show={isShow}>

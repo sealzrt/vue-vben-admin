@@ -79,43 +79,73 @@
 
   const props = defineProps(basicProps);
 
+  // 定义一个常量emit，用于触发事件
   const emit = defineEmits([
+    // 获取数据成功时触发
     'fetch-success',
+    // 获取数据失败时触发
     'fetch-error',
+    // 选择项发生变化时触发
     'selection-change',
+    // 注册时触发
     'register',
+    // 行点击时触发
     'row-click',
+    // 行双击时触发
     'row-dbClick',
+    // 行右键点击时触发
     'row-contextmenu',
+    // 行鼠标进入时触发
     'row-mouseenter',
+    // 行鼠标离开时触发
     'row-mouseleave',
+    // 编辑结束时触发
     'edit-end',
+    // 编辑取消时触发
     'edit-cancel',
+    // 编辑行结束时触发
     'edit-row-end',
+    // 编辑项发生变化时触发
     'edit-change',
+    // 展开行发生变化时触发
     'expanded-rows-change',
+    // 发生变化时触发
     'change',
+    // 列发生变化时触发
     'columns-change',
   ]);
 
+  // 定义 attrs 和 slots 变量，用于获取组件的属性和插槽
   const attrs = useAttrs();
   const slots = useSlots();
 
+  // 定义 tableElRef 变量，用于获取表格元素
   const tableElRef = ref(null);
+  // 定义 tableData 变量，用于获取表格数据
   const tableData = ref([]);
 
+  // 定义 wrapRef 变量，用于获取表格包裹元素
   const wrapRef = ref(null);
+  // 定义 formRef 变量，用于获取表单元素
   const formRef = ref(null);
+  /*** 定义 innerPropsRef 变量，用于获取 动态设置的表格属性 ***/
   const innerPropsRef = ref<Partial<BasicTableProps>>();
 
+  // 获取表格的前缀类名
   const { prefixCls } = useDesign('basic-table');
+  // 注册表单
   const [registerForm, formActions] = useForm();
 
+  /*** 计算属性: 获取表格的所有属性 ***/
   const getProps = computed(() => {
+    // 将props和innerPropsRef的值合并为一个新对象
     return { ...props, ...unref(innerPropsRef) } as BasicTableProps;
   });
 
+  // 注入PageWrapperFixedHeightKey的值，默认值为false
   const isFixedHeightPage = inject(PageWrapperFixedHeightKey, false);
+
+  // 当isFixedHeightPage不为空且props中canResize为true时，警告一个信息
   watchEffect(() => {
     unref(isFixedHeightPage) &&
       props.canResize &&
@@ -125,6 +155,7 @@
   });
 
   const { getLoading, setLoading } = useLoading(getProps);
+
   const { getPaginationInfo, getPagination, setPagination, setShowPagination, getShowPagination } =
     usePagination(getProps);
 
@@ -322,6 +353,7 @@
   };
   createTableContext({ ...tableAction, wrapRef, getBindValues });
 
+  /**** 注册 ****/
   emit('register', tableAction, formActions);
 
   defineExpose({ tableElRef, ...tableAction });
