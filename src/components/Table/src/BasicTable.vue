@@ -25,15 +25,17 @@
       @resize-column="setColumnWidth"
       @expand="handleTableExpand"
     >
+      <!-- 渲染 动态作用域插槽-->
       <template #[item]="data" v-for="item in Object.keys($slots)" :key="item">
         <slot :name="item" v-bind="data || {}"></slot>
       </template>
+      <!-- 个性化头部单元格-->
       <template #headerCell="{ column }">
         <slot name="headerCell" v-bind="{ column }">
           <HeaderCell :column="column" />
         </slot>
       </template>
-      <!-- 增加对antdv3.x兼容 -->
+      <!-- 个性化单元格, 增加对antdv3.x兼容 -->
       <template #bodyCell="data">
         <slot name="bodyCell" v-bind="data || {}"></slot>
       </template>
