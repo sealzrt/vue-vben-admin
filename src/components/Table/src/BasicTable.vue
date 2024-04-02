@@ -25,7 +25,7 @@
       @resize-column="setColumnWidth"
       @expand="handleTableExpand"
     >
-      <!-- 渲染 动态作用域插槽-->
+      <!-- !!!透传插槽!!!: 渲染 动态作用域插槽-->
       <template #[item]="data" v-for="item in Object.keys($slots)" :key="item">
         <slot :name="item" v-bind="data || {}"></slot>
       </template>
