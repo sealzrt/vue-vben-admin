@@ -21,7 +21,7 @@
           :setFormModel="setFormModel"
         >
           <!--  FormItem的插槽内容, 动态作用域插槽!!!
-                #[item]动态插槽key 与 FormItem 的 schema.slot 配置key 不一致的会忽略
+                #[item]动态插槽key 与 FormItem 的 schema.slot 的配置key 不一致的会忽略
                 $slots: 是父组件传入的所有插槽的集合
                 data为FormItem 执行插槽函数时的 作用域插槽数据
           -->
