@@ -20,13 +20,13 @@
           :formModel="formModel"
           :setFormModel="setFormModel"
         >
-          <!--  FormItem的插槽内容, 动态插槽!!!
-                #[item]动态插槽key 与 FormItem 的 schema.slot 配置key 保持一致, 不一致的会忽略
+          <!--  FormItem的插槽内容, 动态作用域插槽!!!
+                #[item]动态插槽key 与 FormItem 的 schema.slot 配置key 不一致的会忽略
                 $slots: 是父组件传入的所有插槽的集合
                 data为FormItem 执行插槽函数时的 作用域插槽数据
           -->
           <template #[item]="data" v-for="item in Object.keys($slots)">
-            <!-- 再次使用插槽, 保持key一致, 在父组件可以动态传递 表单项(字段) 的模板和数据-->
+            <!-- #[item]动态插槽key 与 FormItem 的 schema.slot 配置key 不一致的会忽略-->
             <slot :name="item" v-bind="data || {}"></slot>
           </template>
         </FormItem>

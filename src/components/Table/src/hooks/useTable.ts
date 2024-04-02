@@ -34,7 +34,11 @@ export function useTable(tableProps?: Props): [
 
   let stopWatch: WatchStopHandle;
 
-  // 注册表格实例
+  /**
+   * 注册 表格实例 和 form实例
+   * @param instance
+   * @param formInstance
+   */
   function register(instance: TableActionType, formInstance: UseTableMethod) {
     // 如果是生产模式，则在组件卸载时，清空表格引用和加载状态
     isProdMode() &&
@@ -71,6 +75,7 @@ export function useTable(tableProps?: Props): [
     );
   }
 
+  // 获取表单实例对象
   function getTableInstance(): TableActionType {
     const table = unref(tableRef);
     if (!table) {
@@ -84,103 +89,136 @@ export function useTable(tableProps?: Props): [
   const methods: TableActionType & {
     getForm: () => FormActionType;
   } = {
+    // 重新加载
     reload: async (opt?: FetchParams) => {
       return await getTableInstance().reload(opt);
     },
+    // 设置表格属性
     setProps: (props: Partial<BasicTableProps>) => {
       getTableInstance().setProps(props);
     },
+    // 重新计算表格高度
     redoHeight: () => {
       getTableInstance().redoHeight();
     },
+    // 设置选中的行
     setSelectedRows: (rows: Recordable[]) => {
       return toRaw(getTableInstance().setSelectedRows(rows));
     },
+    // 设置表格加载状态
     setLoading: (loading: boolean) => {
       getTableInstance().setLoading(loading);
     },
+    // 获取表格数据源
     getDataSource: () => {
       return getTableInstance().getDataSource();
     },
+    // 获取原始表格数据源
     getRawDataSource: () => {
       return getTableInstance().getRawDataSource();
     },
+    // 获取表格列
     getColumns: ({ ignoreIndex = false }: { ignoreIndex?: boolean } = {}) => {
       const columns = getTableInstance().getColumns({ ignoreIndex }) || [];
       return toRaw(columns);
     },
+    // 设置表格列
     setColumns: (columns: BasicColumn[] | string[]) => {
       getTableInstance().setColumns(columns);
     },
+    // 设置表格数据
     setTableData: (values: any[]) => {
       return getTableInstance().setTableData(values);
     },
+    // 设置表格分页
     setPagination: (info: Partial<PaginationProps>) => {
       return getTableInstance().setPagination(info);
     },
+    // 根据key删除选中的行
     deleteSelectRowByKey: (keyValue: Key) => {
       getTableInstance().deleteSelectRowByKey(keyValue);
     },
+    // 获取选中的行key
     getSelectRowKeys: () => {
       return toRaw(getTableInstance().getSelectRowKeys());
     },
+    // 获取选中的行
     getSelectRows: () => {
       return toRaw(getTableInstance().getSelectRows());
     },
+    // 清除选中的行key
     clearSelectedRowKeys: () => {
       getTableInstance().clearSelectedRowKeys();
     },
+    // 设置选中的行key
     setSelectedRowKeys: (keyValues: Key[]) => {
       getTableInstance().setSelectedRowKeys(keyValues);
     },
+    // 获取表格分页
     getPaginationRef: () => {
       return getTableInstance().getPaginationRef();
     },
+    // 获取表格尺寸
     getSize: () => {
       return toRaw(getTableInstance().getSize());
     },
+    // 更新表格数据
     updateTableData: (index: number, key: string, value: any) => {
       return getTableInstance().updateTableData(index, key, value);
     },
+    // 删除表格数据记录
     deleteTableDataRecord: (keyValues: Key | Key[]) => {
       return getTableInstance().deleteTableDataRecord(keyValues);
     },
+    // 插入表格数据记录
     insertTableDataRecord: (record: Recordable | Recordable[], index?: number) => {
       return getTableInstance().insertTableDataRecord(record, index);
     },
+    // 获取表格实例
     updateTableDataRecord: (keyValue: Key, record: Recordable) => {
       return getTableInstance().updateTableDataRecord(keyValue, record);
     },
+    // 获取表格实例
     findTableDataRecord: (keyValue: Key) => {
       return getTableInstance().findTableDataRecord(keyValue);
     },
+    // 返回表格实例的行选择器
     getRowSelection: () => {
       return toRaw(getTableInstance().getRowSelection());
     },
+    // 返回表格实例的缓存列
     getCacheColumns: () => {
       return toRaw(getTableInstance().getCacheColumns());
     },
+    // 返回表格实例的表单
     getForm: () => {
       return unref(formRef) as unknown as FormActionType;
     },
+    // 设置表格实例的分页显示
     setShowPagination: async (show: boolean) => {
       getTableInstance().setShowPagination(show);
     },
+    // 获取表格实例的分页显示
     getShowPagination: () => {
       return toRaw(getTableInstance().getShowPagination());
     },
+    // 展开所有行
     expandAll: () => {
       getTableInstance().expandAll();
     },
+    // 折叠所有行
     collapseAll: () => {
       getTableInstance().collapseAll();
     },
+    // 展开指定行的行
     expandRows: (keyValues: Key[]) => {
       getTableInstance().expandRows(keyValues);
     },
+    // 折叠指定行的行
     collapseRows: (keyValues: Key[]) => {
       getTableInstance().collapseRows(keyValues);
     },
+    // 滚动到指定位置
     scrollTo: (pos: string) => {
       getTableInstance().scrollTo(pos);
     },

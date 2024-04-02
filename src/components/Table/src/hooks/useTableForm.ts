@@ -21,8 +21,13 @@ export function useTableForm(
     };
   });
 
+  /**
+   * 获取 表单插槽的key, 插槽key 以 "form-" 开头
+   */
   const getFormSlotKeys: ComputedRef<string[]> = computed(() => {
+    // 获取slots对象的所有key
     const keys = Object.keys(slots);
+    // 将key以'form-'开头进行过滤，并将过滤后的结果赋值给keys
     return keys
       .map((item) => (item.startsWith('form-') ? item : null))
       .filter((item) => !!item) as string[];

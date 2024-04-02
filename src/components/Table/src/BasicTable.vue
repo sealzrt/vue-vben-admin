@@ -10,6 +10,7 @@
       @submit="handleSearchInfoChange"
       @advanced-change="redoHeight"
     >
+      <!-- 渲染 以 "form-" 开头的 表单相关的 动态作用域插槽-->
       <template #[replaceFormSlotKey(item)]="data" v-for="item in getFormSlotKeys">
         <slot :name="item" v-bind="data || {}"></slot>
       </template>

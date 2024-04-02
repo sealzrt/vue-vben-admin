@@ -76,7 +76,7 @@
     pagination: false,
   });
 
-  // 暴露getDataSource 供父组件使用
+  /*** 暴露getDataSource 供父组件使用 ***/
   defineExpose({ getDataSource });
 
   // 函数handleEdit用于处理编辑操作
@@ -125,7 +125,7 @@
     data.push(addRow);
   }
 
-  // 函数createActions用于创建操作
+  // 函数createActions用于创建操作的配置数据
   function createActions(record: EditRecordRow): ActionItem[] {
     // 如果record不可编辑，则返回编辑和删除操作
     if (!record.editable) {
