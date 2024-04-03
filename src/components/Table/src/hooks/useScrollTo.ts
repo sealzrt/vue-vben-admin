@@ -2,6 +2,11 @@ import type { ComputedRef, Ref } from 'vue';
 import { nextTick, unref } from 'vue';
 import { warn } from '@/utils/log';
 
+/**
+ * useTableScrollTo 函数主要用于处理表格的滚动功能，包括计算表格的高度、处理滚动条的显示隐藏、计算滚动条的宽度等
+ * @param tableElRef
+ * @param getDataSourceRef
+ */
 export function useTableScrollTo(
   tableElRef: Ref<ComponentRef>,
   getDataSourceRef: ComputedRef<Recordable[]>,

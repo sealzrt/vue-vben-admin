@@ -101,6 +101,11 @@ function handleActionColumn(propsRef: ComputedRef<BasicTableProps>, columns: Bas
   }
 }
 
+/**
+ * 处理表格的列配置，包括获取、设置、排序和过滤等操作
+ * @param propsRef
+ * @param getPaginationRef
+ */
 export function useColumns(
   propsRef: ComputedRef<BasicTableProps>,
   getPaginationRef: ComputedRef<boolean | PaginationProps>,

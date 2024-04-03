@@ -15,6 +15,16 @@ import { useRootSetting } from '@/hooks/setting/useRootSetting';
 
 const { getShowFooter, getFullContent } = useRootSetting();
 
+/**
+ * 处理表格的滚动功能，包括计算表格的高度、处理滚动条的显示隐藏、计算滚动条的宽度等
+ * @param propsRef
+ * @param tableElRef
+ * @param columnsRef
+ * @param rowSelectionRef
+ * @param getDataSourceRef
+ * @param wrapRef
+ * @param formRef
+ */
 export function useTableScroll(
   propsRef: ComputedRef<BasicTableProps>,
   tableElRef: Ref<ComponentRef>,
