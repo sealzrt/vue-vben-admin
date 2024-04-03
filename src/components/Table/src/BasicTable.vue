@@ -408,6 +408,10 @@
     },
     setCacheColumns,
   };
+
+  /**
+   * 创建表格的上下文
+   */
   createTableContext({ ...tableAction, wrapRef, getBindValues });
 
   /**** 注册 ****/
