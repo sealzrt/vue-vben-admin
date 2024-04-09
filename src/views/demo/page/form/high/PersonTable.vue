@@ -20,6 +20,8 @@
     EditRecordRow,
   } from '@/components/Table';
 
+  debugger
+
   const columns: BasicColumn[] = [
     {
       title: '成员姓名',

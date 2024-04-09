@@ -11,6 +11,7 @@
       @advanced-change="redoHeight"
     >
       <!-- !!!透传插槽!!!  渲染 表单相关的 以 "form-" 开头的 动态作用域插槽-->
+      <!-- 根据父组件传递的插槽内容，使用动态插槽的方式 继续向下传递插槽内容 -->
       <template #[replaceFormSlotKey(item)]="data" v-for="item in getFormSlotKeys">
         <slot :name="item" v-bind="data || {}"></slot>
       </template>
@@ -26,6 +27,7 @@
       @expand="handleTableExpand"
     >
       <!-- !!!透传插槽!!!: 渲染 动态作用域插槽-->
+      <!-- $slots 一个表示父组件所传入插槽的对象-->
       <template #[item]="data" v-for="item in Object.keys($slots)" :key="item">
         <slot :name="item" v-bind="data || {}"></slot>
       </template>
@@ -77,6 +79,8 @@
   import { basicProps } from './props';
   import { isFunction } from '@/utils/is';
   import { warn } from '@/utils/log';
+
+  debugger
 
   defineOptions({ name: 'BasicTable' });
 
