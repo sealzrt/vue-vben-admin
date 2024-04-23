@@ -82,6 +82,9 @@ export interface ColEx {
   xxl?: { span: ColSpanType; offset: ColSpanType } | ColSpanType;
 }
 
+/**
+ * 汇总了所有的组件key, 如：“Input” | "Select" | "Checkbox" | ...
+ */
 export type ComponentType = keyof ComponentProps;
 
 type MethodsNameToCamelCase<
@@ -95,6 +98,11 @@ type MethodsNameTransform<T> = {
   [K in keyof T as K extends `on${string}` ? MethodsNameToCamelCase<K> : never]: T[K];
 };
 
+/**
+ * 从组件类型中提取出props类型，但排除掉VNodeProps对象的所有key
+ * Omit：是TypeScript标准库中提供的一个通用类型工具。它用于创建一个新的类型，该类型将原始类型中的指定属性排除掉，返回剩余的属性
+ *    InstanceType 是 TypeScript 中的一个内置工具类型，用于获取一个类的实例类型
+ */
 type ExtractPropTypes<T extends Component> = T extends new (...args: any) => any
   ? Omit<InstanceType<T>['$props'], keyof VNodeProps>
   : never;
@@ -130,6 +138,9 @@ type CustomComponents<T = _CustomComponents> = {
   [K in keyof T]: T[K] & MethodsNameTransform<T[K]>;
 };
 
+/**
+ * 汇总了所有组件的属性定义
+ */
 export interface ComponentProps {
   Input: ExtractPropTypes<(typeof import('ant-design-vue/es/input'))['default']>;
   InputGroup: ExtractPropTypes<(typeof import('ant-design-vue/es/input'))['InputGroup']>;

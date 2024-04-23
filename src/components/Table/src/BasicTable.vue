@@ -27,7 +27,7 @@
       @expand="handleTableExpand"
     >
       <!-- !!!透传插槽!!!: 渲染 动态作用域插槽-->
-      <!-- $slots 一个表示父组件所传入插槽的对象-->
+      <!-- $slots (普通插槽对象) 和 $scopedSlots (作用域插槽对象) 都表示父组件所传入插槽的对象 -->
       <template #[item]="data" v-for="item in Object.keys($slots)" :key="item">
         <slot :name="item" v-bind="data || {}"></slot>
       </template>
@@ -79,8 +79,6 @@
   import { basicProps } from './props';
   import { isFunction } from '@/utils/is';
   import { warn } from '@/utils/log';
-
-  debugger
 
   defineOptions({ name: 'BasicTable' });
 

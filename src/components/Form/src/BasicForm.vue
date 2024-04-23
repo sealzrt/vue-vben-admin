@@ -80,8 +80,6 @@
    */
   defineOptions({ name: 'BasicForm' });
 
-  // debugger
-
   // 为了在声明 props 和 emits 选项时获得完整的类型推导支持，我们可以使用 defineProps 和 defineEmits API
   /*** 定义props类型和默认值 ***/
   const props = defineProps(basicProps);

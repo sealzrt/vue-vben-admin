@@ -124,6 +124,10 @@ export function getRawRoute(route: RouteLocationNormalized): RouteLocationNormal
   };
 }
 
+/**
+ * 描述一个类，该类具有一个构造函数和一个 $props 属性，其中 $props 属性中可能包含一个名为 onClick 的函数属性
+ *    构造函数返回一个对象, 该对象包含 $props属性
+ */
 // https://github.com/vant-ui/vant/issues/8302
 type EventShim = {
   new (...args: any[]): {
