@@ -43,6 +43,11 @@ export function createContext<T>(
   };
 }
 
+/**
+ * 使用inject 读取上下文数据
+ * @param key
+ * @param native
+ */
 export function useContext<T>(key: InjectionKey<T>, native?: boolean): T;
 
 /**

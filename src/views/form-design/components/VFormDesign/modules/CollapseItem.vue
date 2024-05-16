@@ -4,10 +4,15 @@
       tag="ul"
       :model-value="list"
       v-bind="{
+        // 设置组的名称，如果你有两个draggable，需要相互拖拽，这个group的那么需要一致才可以
         group: { name: 'form-draggable', pull: 'clone', put: false },
+        // 是否开启内部排序
         sort: false,
+        // 克隆
         clone: cloneItem,
+        // 拖动的动画时长，在同一个draggable中有效，为0的时候表示没有动画效果
         animation: 180,
+        // 当拖动列表单元时会生成一个副本作为影子单元来模拟被拖动单元排序的情况，此配置项就是来给这个影子单元添加一个class，我们可以通过这种方式来给影子元素进行编辑样式
         ghostClass: 'moving',
       }"
       item-key="type"
@@ -45,6 +50,9 @@
         type: [Array] as PropType<IVFormComponent[]>,
         default: () => [],
       },
+      /**
+       * 通过props传递函数, 和传递变量的方式一致 :handleListPush="handleListPushDrag"
+       */
       handleListPush: {
         type: Function,
         default: null,
@@ -54,6 +62,12 @@
       const { prefixCls } = useDesign('form-design-collapse-item');
 
       const state = reactive({});
+
+      /**
+       * 拖拽开始的事件
+       * @param e
+       * @param list1
+       */
       const handleStart = (e: any, list1: IVFormComponent[]) => {
         emit('start', list1[e.oldIndex].component);
       };

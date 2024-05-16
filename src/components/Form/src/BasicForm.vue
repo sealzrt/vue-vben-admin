@@ -98,12 +98,13 @@
     'field-value-change',
   ]);
 
-  // 获取当前组件的属性, useSlots 和 useAttrs 是真实的运行时函数
+  // useAttrs 返回一个对象，包含了传递给组件但未在 props 中声明的所有属性
   const attrs = useAttrs();
 
   // 整个表单的数据
   const formModel = reactive({});
-  // 获取modal上下文
+  // 获取modal上下文, 内部使用inject多层级组件之间传递数据;
+  // inject 可以让一个组件从祖先组件中获取由 provide 提供的数据;  provide 和 inject 并不是响应式的。如果需要响应式的数据，确保使用 reactive 或 ref 进行包装。
   const modalFn = useModalContext();
 
   // 高级模式 state

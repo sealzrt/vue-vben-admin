@@ -17,13 +17,13 @@ type Props = Partial<DynamicProps<FormProps>>;
 
 /**
  * 注册一个表单实例, 对form实例 提供了一些操作接口
- * 监听表单属性的变化，并在变化时更新表单实例的属性
+ *    在注册之后,动态监听表单属性的变化，并在变化时更新表单实例的属性
  * 提供一些方法，用于操作表单实例，如滚动到指定字段、设置表单属性/schemas、更新表单模式、获取表单值、设置表单值、验证表单 等
  * @param props
  */
 export function useForm(props?: Props): UseFormReturnType {
   // debugger
-  // 定义formRef变量，类型为Nullable<FormActionType>
+  // 定义formRef变量, 存储form实例，类型为Nullable<FormActionType>
   const formRef = ref<Nullable<FormActionType>>(null);
   // 定义loadedRef变量，类型为Nullable<boolean>
   const loadedRef = ref<Nullable<boolean>>(false);
@@ -39,7 +39,7 @@ export function useForm(props?: Props): UseFormReturnType {
         'The form instance has not been obtained, please make sure that the form has been rendered when performing the form operation!',
       );
     }
-    // 等待下一次DOM更新
+    // 确保在下一次DOM更新之后
     await nextTick();
     // 返回form实例，类型为FormActionType
     return form as FormActionType;

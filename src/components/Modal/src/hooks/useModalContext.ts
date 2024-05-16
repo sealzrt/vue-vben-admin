@@ -17,6 +17,7 @@ export function createModalContext(context: ModalContextProps) {
 }
 
 // 定义一个函数useModalContext，无参数，无返回值
+// 内部使用inject 读取上下文数据
 export function useModalContext() {
   // 调用useContext函数，使用key变量，返回一个ModalContextProps类型的上下文
   return useContext<ModalContextProps>(key);

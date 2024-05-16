@@ -48,9 +48,7 @@
       Divider,
     },
     setup() {
-      const state = reactive<{
-        toolbarsConfigs: IToolbarsConfig[];
-      }>({
+      const state = reactive<{ toolbarsConfigs: IToolbarsConfig[]; }>({
         toolbarsConfigs: [
           {
             title: '预览-支持布局',
